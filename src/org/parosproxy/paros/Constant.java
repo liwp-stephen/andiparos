@@ -85,6 +85,8 @@ public final class Constant {
 	public static final int MAX_HOST_CONNECTION = 5;
 	
 	public static final String USER_AGENT_DEFAULT = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0;)";
+	
+	public static boolean useNimbus = false;
 
 	private static String staticEyeCatcher = PROGRAM_NAME;
 	private static boolean staticSP = false;
@@ -92,6 +94,7 @@ public final class Constant {
 	private static Pattern patternLinux = Pattern.compile("linux", Pattern.CASE_INSENSITIVE);
 	private static Pattern patternSolaris = Pattern.compile("solaris", Pattern.CASE_INSENSITIVE);
 	private static Pattern patternOSX = Pattern.compile("mac", Pattern.CASE_INSENSITIVE);
+	
 
 	public static String getEyeCatcher() {
 		return staticEyeCatcher;
@@ -150,7 +153,10 @@ public final class Constant {
 				System.setProperty("log4j.configuration", "xml/log4j.properties");
 
 				if (!f.isDirectory()) {
-					f.mkdir();
+                    if (! f.mkdir() ) {
+                    	// ZAP: report failure to create directory
+                    	System.out.println("Failed to create directory " + f.getAbsolutePath());
+                    }
 					log = LogFactory.getLog(Constant.class);
 					log.info("Created directory " + userhome);
 
@@ -193,7 +199,10 @@ public final class Constant {
 				f = new File(FOLDER_SESSION);
 				if (!f.isDirectory()) {
 					log.info("Creating directory " + FOLDER_SESSION);
-					f.mkdir();
+					if (! f.mkdir() ) {
+                    	// ZAP: report failure to create directory
+                    	System.out.println("Failed to create directory " + f.getAbsolutePath());
+                    }
 				}
 			} catch (Exception e) {
 				System.err.println("Unable to initialize home directory! " + e.getMessage());

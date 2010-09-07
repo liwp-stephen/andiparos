@@ -50,6 +50,9 @@ public class HttpRequestHeader extends HttpHeader {
 	public final static String TRACE	= "TRACE";
 	public final static String CONNECT	= "CONNECT";
 
+	// ZAP: Added method array
+	public final static String [] METHODS = {OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT};
+	
 	public final static String HOST = "Host";
 
 	private static final Pattern patternRequestLine =

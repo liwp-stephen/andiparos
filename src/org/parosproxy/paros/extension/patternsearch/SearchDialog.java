@@ -407,10 +407,11 @@ public class SearchDialog extends AbstractDialog {
 			choice.addItem("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}..........get IP addresses from RESPONSE");
 			choice.addItem("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}..........get Dripple Version Numbers addresses from RESPONSE");
 			choice.addItem("Version.*\\r\\n..........get version strings from RESPONSE");
+                        choice.addItem("@.*\\$Id:.*\\$..........get all CVS version tags from RESPONSE");
 			choice.addItem("[\\w]*(\\.[\\w]*)*@[\\w]*(\\.[\\w]*)..........get email addresses from RESPONSE");
 			choice.addItem("HTTP/1.[01].*..........get HTTP headers from RESPONSE");
 			choice.addItem("DSN=.*..........get DSN connection strings from RESPONSE");
-			choice.addItem("<input\\stype=\"hidden\"\\s.*?/>..........get hidden input strings from RESPONSE");
+			choice.addItem("<input.*[^>]type=\"hidden\".*?/>..........get hidden input strings from RESPONSE");
 			choice.addItem("SELECT\\s[\\w\\*\\)\\(\\,\\s]+\\sFROM\\s[\\w]+..........get SQL queries from RESPONSE");
 			choice.addItem("UPDATE\\s[\\w]+\\sSET\\s[\\w\\,\\'\\=]+..........get SQL queries from RESPONSE");
 			choice.addItem("INSERT\\sINTO\\s[\\d\\w]+[\\s\\w\\d)\\(\\,]*\\sVALUES..........get SQL queries from RESPONSE");

@@ -96,7 +96,8 @@ public class View implements ViewDelegate {
 				Constant.PROGRAM_NAME, JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	public static View getSingleton() {
+	// ZAP: FindBugs fix - make method synchronised
+	public static  synchronized View getSingleton() {
 		if (view == null) {
 			view = new View();
 			view.init();

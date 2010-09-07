@@ -32,6 +32,7 @@ import java.util.Vector;
 
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpUtil;
+import org.parosproxy.paros.view.View;
 
 
 /**
@@ -122,6 +123,8 @@ public class ProxyServer implements Runnable {
    	            
    	        } catch (Exception e) {
    	            if (!isDynamicPort) {
+   	            	// ZAP: Warn the user if we cant listen on the static port
+   	            	View.getSingleton().showWarningDialog("Cannot listen on port " + port);
    	                e.printStackTrace();
    	                return -1;
    	            } else {

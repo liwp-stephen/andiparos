@@ -45,16 +45,9 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpUtil;
 
 
-
-/**
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
-
 class ProxyThread implements Runnable {
 
-	private static final String		CONNECT_HTTP_200 = "HTTP/1.1 200 Connection established\r\nProxy-connection: Keep-alive\r\n\r\n";
+	private static final String	CONNECT_HTTP_200 = "HTTP/1.1 200 Connection established\r\nProxy-connection: Keep-alive\r\n\r\n";
     
 	private static Log log = LogFactory.getLog(ProxyThread.class);
     
@@ -83,6 +76,8 @@ class ProxyThread implements Runnable {
 			inSocket.setTcpNoDelay(true);
     		inSocket.setSoTimeout(60000);
 		} catch (SocketException e) {
+			// ZAP: Log exceptions
+			log.warn(e.getMessage(), e);
 		}
 
 		thread = new Thread(this);
@@ -165,6 +160,8 @@ class ProxyThread implements Runnable {
 			        requestHeader = httpIn.readRequestHeader(isSecure);
 
 			    } catch (SocketTimeoutException e) {
+			    	// ZAP: Log the exception
+		        	log.error(e.getMessage(), e);
 			        return;
 			    }
 			}
@@ -253,13 +250,19 @@ class ProxyThread implements Runnable {
             if (httpIn != null) {
                 httpIn.close();
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        	// ZAP: Log exceptions
+			log.warn(e.getMessage(), e);
+        }
         
         try {
             if (httpOut != null) {
                 httpOut.close();
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        	// ZAP: Log exceptions
+			log.warn(e.getMessage(), e);
+        }
 		HttpUtil.closeSocket(inSocket);
         
 		if (httpSender != null) {
@@ -281,6 +284,8 @@ class ProxyThread implements Runnable {
 			try {
 			    listener.onHttpRequestSend(httpMessage);
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+				log.warn(e.getMessage(), e);
 			}
 		}	
 	}
@@ -298,6 +303,8 @@ class ProxyThread implements Runnable {
 			try {
 			    listener.onHttpResponseReceive(httpMessage);
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+				log.warn(e.getMessage(), e);
 			}
 		}
 	}
@@ -312,6 +319,8 @@ class ProxyThread implements Runnable {
                 }
             }
         } catch (Exception e) {
+        	// ZAP: Log exceptions
+			log.warn(e.getMessage(), e);
         }
         return isRecursive;
     }

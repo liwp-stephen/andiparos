@@ -32,11 +32,6 @@ public class HttpUtil {
 	public static String encodeURI(String uri) throws URISyntaxException {
 		String tmp = null;
 
-		// try {
-		// tmp = URLEncoder.encode(uri, "8859_1");
-		// } catch (UnsupportedEncodingException e) {
-		// }
-
 		tmp = uri.replaceAll(" ", "%20");
 		tmp = tmp.replaceAll("<", "%3C");
 		tmp = tmp.replaceAll(">", "%3E");

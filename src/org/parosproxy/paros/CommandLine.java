@@ -33,10 +33,10 @@ import org.parosproxy.paros.network.HttpSender;
  */
 public class CommandLine {
 
-	static final String SESSION = "-session";
-	static final String NEW_SESSION = "-newsession";
-	static final String HELP = "-help";
-	static final String HELP2 = "-h";
+	public static final String SESSION = "-session";
+	public static final String NEW_SESSION = "-newsession";
+	public static final String HELP = "-help";
+	public static final String HELP2 = "-h";
 
 	static final String NO_USER_AGENT = "-nouseragent";
 	static final String SP = "-sp";
@@ -220,11 +220,13 @@ public class CommandLine {
 		return (String) keywords.get(keyword);
 	}
 
-	static String getHelpGeneral() {
+	// ZAP: Made public
+	public static String getHelpGeneral() {
 		String CRLF = "\r\n";
-		String help = "GUI usage:" + CRLF + "\tjavaw andiparos.jar" + CRLF
-				+ "\tjava -jar andiparos.jar" + CRLF
-				+ "see java -jar andiparos.jar {-h|-help} for detail.\r\n\r\n";
+		String help = "GUI usage:" + CRLF
+			+ "\tjavaw andiparos.jar" + CRLF
+			+ "\tjava -jar andiparos.jar" + CRLF
+			+ "see java -jar andiparos.jar {-h|-help} for detail.\r\n\r\n";
 		return help;
 	}
 

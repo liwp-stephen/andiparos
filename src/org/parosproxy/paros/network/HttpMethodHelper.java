@@ -88,7 +88,8 @@ public class HttpMethodHelper {
 
 		// set various headers
 		int pos = 0;
-		Pattern pattern = null;
+		// ZAP: FindBugs fix - always initialise pattern
+		Pattern pattern = patternCRLF;
 		String delimiter = CRLF;
 
 		String msg = header.getHeadersAsString();

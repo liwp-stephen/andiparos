@@ -22,7 +22,6 @@ package org.parosproxy.paros.core.scanner.plugin;
 
 import java.util.regex.Pattern;
 
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -35,10 +34,10 @@ import org.parosproxy.paros.network.HttpMessage;
  */
 public class TestCrossSiteScriptInScriptSection extends AbstractAppParamPlugin {
 
-	private static final String XSS4 = "alert('{" + Constant.getEyeCatcher() + "}');";
+	private static final String XSS4 = "';alert(1);//";
 
 	private static final Pattern patternXSS4 = Pattern.compile(
-			"<SCRIPT>.*?alert\\('\\{" + Constant.getEyeCatcher() + "\\}'\\);.*?</SCRIPT>", Pattern.DOTALL);
+			"<script( type=\"text/javascript\")?>.*" + XSS4 + "*?</script>", Pattern.DOTALL);
 
 	public int getId() {
 		return 40002;
@@ -105,14 +104,12 @@ public class TestCrossSiteScriptInScriptSection extends AbstractAppParamPlugin {
 		
 		StringBuffer sb = new StringBuffer();
 		
-		if (matchBodyPattern(msg, patternXSS4, sb)) {
+		HttpMessage msg2 = msg;
+		
+		if (matchBodyPattern(msg2, patternXSS4, sb)) {
 			bingo(Alert.RISK_MEDIUM, Alert.SUSPICIOUS, null, param + "=" + XSS4, null, msg);
 			return;
 		}
 
-	}
-
-	public boolean isVisible() {
-		return Constant.isSP();
 	}
 }

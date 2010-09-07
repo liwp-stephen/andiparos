@@ -121,30 +121,20 @@ public class HttpInputStream extends BufferedInputStream {
 	 */
 	public synchronized HttpBody readBody(HttpHeader httpHeader) {
 
-		int contentLength = httpHeader.getContentLength(); // -1 = default to
-															// unlimited length
-															// until connection
-															// close
+		int contentLength = httpHeader.getContentLength();
 		int readBodyLength = 0;
 		int len = 0;
 
-		HttpBody body = (contentLength > 0) ? new HttpBody(contentLength)
-				: new HttpBody();
+		HttpBody body = (contentLength > 0) ? new HttpBody(contentLength) : new HttpBody();
 
 		try {
 			while (contentLength == -1 || readBodyLength < contentLength) {
-				len = readBody(contentLength, readBodyLength, mBuffer); // use
-																		// mBuffer
-																		// to
-																		// avoid
-																		// locally
-																		// create
-																		// too
-																		// many
-																		// data
-																		// buffer
+				len = readBody(contentLength, readBodyLength, mBuffer);
 				if (len > 0) {
 					readBodyLength += len;
+				} else if (len < 0) {
+					// ZAP: FindBugs fix
+					break;
 				}
 				body.append(mBuffer, len);
 			}

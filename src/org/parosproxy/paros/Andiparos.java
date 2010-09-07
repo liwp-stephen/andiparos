@@ -30,6 +30,8 @@ import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
@@ -58,6 +60,8 @@ public class Andiparos {
 			Protocol protocol = Protocol.getProtocol("https");
 			sslFactory = protocol.getSocketFactory();
 		} catch (Exception e) {
+			// ZAP: Print the exception - log not yet initialised
+	    	e.printStackTrace();
 		}
 		if (sslFactory == null || !(sslFactory instanceof SSLConnector)) {
 			Protocol.registerProtocol("https", new Protocol("https", (ProtocolSocketFactory) new SSLConnector(), 443));
@@ -103,7 +107,26 @@ public class Andiparos {
 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
+		} catch (Exception e) {}
+		
+		// Andiparos: Use Nimbus if it is enforced and installed
+		if(Constant.useNimbus) {
+			try {
+		        for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+		            if ("Nimbus".equals(info.getName())) {
+		                UIManager.setLookAndFeel(info.getClassName());
+		                break;
+		            }
+		        }
+		    } catch (UnsupportedLookAndFeelException e) {
+		        // handle exception
+		    } catch (ClassNotFoundException e) {
+		        // handle exception
+		    } catch (InstantiationException e) {
+		        // handle exception
+		    } catch (IllegalAccessException e) {
+		        // handle exception
+		    }
 		}
 	}
 

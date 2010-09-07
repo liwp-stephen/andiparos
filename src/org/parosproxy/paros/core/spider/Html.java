@@ -49,7 +49,8 @@ public class Html {
 			if (bases[0].getHref().length() > 0) {
 				// base href exists
 				try {
-					uri = new URI(bases[0].getHref(), false);
+					// ZAP: FindBugs fix - assign to this.url rather than url
+					this.uri = new URI(bases[0].getHref(), false);
 				} catch (Exception e) {
 				}
 			}
