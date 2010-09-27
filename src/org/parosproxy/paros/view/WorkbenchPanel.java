@@ -186,7 +186,9 @@ public class WorkbenchPanel extends JPanel {
 		if (tabbedStatus == null) {
 			tabbedStatus = new org.parosproxy.paros.view.TabbedPanel();
 			tabbedStatus.setPreferredSize(new Dimension(800, 200));
-			tabbedStatus.setTabPlacement(JTabbedPane.BOTTOM);
+			//tabbedStatus.setTabPlacement(JTabbedPane.BOTTOM);
+			// ZAP: Move tabs to the top of the panel
+			tabbedStatus.setTabPlacement(JTabbedPane.TOP);
 			tabbedStatus.setName("tabbedStatus");
 			tabbedStatus.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		}

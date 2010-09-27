@@ -27,6 +27,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
 
+import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -55,8 +56,9 @@ public class OutputPanel extends AbstractPanel {
 		this.setLayout(new CardLayout());
 		this.setName("Output");
 		this.setSize(243, 119);
+		// Andiparos: Set output icon
+        this.setIcon(new ImageIcon(getClass().getResource("/resource/icons/page_go.png")));
 		this.add(getJScrollPane(), getJScrollPane().getName());
-
 	}
 
 	/**

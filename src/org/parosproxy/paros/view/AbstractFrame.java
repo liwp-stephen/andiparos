@@ -39,8 +39,7 @@ public abstract class AbstractFrame extends JFrame {
 	}
 
 	private void initialize() {
-		this.setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(getClass().getResource("/resource/icons/andiparos-64.png")));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resource/logos/andiparos-64.png")));
 		this.setVisible(false);
 		this.setTitle(Constant.PROGRAM_NAME + " " + Constant.PROGRAM_VERSION);
 		this.setSize(800, 600);

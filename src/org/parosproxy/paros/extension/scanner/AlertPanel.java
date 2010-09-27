@@ -24,6 +24,7 @@ import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -68,6 +69,8 @@ public class AlertPanel extends AbstractPanel {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName("Alerts");
+        // Andiparos: Set alert icon
+        this.setIcon(new ImageIcon(getClass().getResource("/resource/icons/error.png")));
         this.add(getPaneScroll(), getPaneScroll().getName());
 			
 	}

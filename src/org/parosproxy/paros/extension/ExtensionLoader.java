@@ -200,6 +200,8 @@ public class ExtensionLoader {
             try {
                 panel = panelList.get(i);
                 tab.add(panel, panel.getName());
+                // ZAP: added icon
+        		tab.addTab(panel.getName() + " ", panel.getIcon(), panel);
             } catch (Exception e) {
                 
             }

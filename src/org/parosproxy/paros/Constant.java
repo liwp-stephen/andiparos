@@ -86,7 +86,7 @@ public final class Constant {
 	
 	public static final String USER_AGENT_DEFAULT = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0;)";
 	
-	public static boolean useNimbus = false;
+	public static boolean useNimbus = true;
 
 	private static String staticEyeCatcher = PROGRAM_NAME;
 	private static boolean staticSP = false;

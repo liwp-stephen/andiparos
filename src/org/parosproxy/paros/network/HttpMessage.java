@@ -23,6 +23,7 @@ package org.parosproxy.paros.network;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URI;
@@ -44,7 +45,8 @@ public class HttpMessage {
 	private Object userObject = null;
 	private int timeElapsed = 0;
 	private long timeSent = 0;
-	private String tag = "";
+	// ZAP: Support for multiple tags
+    private String tag = null;
 	private boolean flag = false;
 
 	/**
@@ -475,19 +477,20 @@ public class HttpMessage {
 	}
 
 	/**
-	 * @return Returns the tag.
-	 */
-	public String getTag() {
-		return tag;
-	}
+     * @return Returns the tag.
+     */
+    public String getTag() {
+            return tag;
+    }
 
-	/**
-	 * @param tag
-	 *            The tag to set.
-	 */
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
+    /**
+     * @param tag
+     *            The tag to set.
+     */
+    public void setTag(String tag) {
+            this.tag = tag;
+    }
+
 	
 	/**
      * @return Returns the flag.

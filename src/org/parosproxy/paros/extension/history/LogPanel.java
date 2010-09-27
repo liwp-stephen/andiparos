@@ -58,11 +58,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.HttpPanel;
 import org.parosproxy.paros.view.View;
 
-/**
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public class LogPanel extends AbstractPanel implements Runnable {
 
 	private static final long serialVersionUID = 5013184985828986669L;

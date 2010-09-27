@@ -41,6 +41,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 
 import org.parosproxy.paros.extension.beanshell.ExtensionBeanShell;
+import org.zaproxy.zap.extension.search.ExtensionSearch;
 
 /**
  * 
@@ -98,6 +99,8 @@ public class Control extends AbstractControl {
 
 		getExtensionLoader().addExtension(new ExtensionTrap());
 		getExtensionLoader().addExtension(new ExtensionHistory());
+		// ZAP: new extension - search 
+        getExtensionLoader().addExtension(new ExtensionSearch());
 		getExtensionLoader().addExtension(new ExtensionEncoder());
 		getExtensionLoader().addExtension(new ExtensionSpider());
 		getExtensionLoader().addExtension(new ExtensionScanner());

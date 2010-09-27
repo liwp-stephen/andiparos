@@ -22,24 +22,31 @@ package org.parosproxy.paros.extension;
 
 import java.awt.Component;
 
+import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-/**
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class AbstractPanel extends JPanel {
 
 	private static final long serialVersionUID = -7627428194348043280L;
 
+	// ZAP: Added icon
+	private Icon icon = null;
+	
 	/**
 	 * This is the default constructor
 	 */
 	public AbstractPanel() {
 		super();
 		initialize();
+	}
+	
+	public Icon getIcon() {
+		return icon;
+	}
+	
+	public void setIcon(Icon icon) {
+		this.icon = icon;
 	}
 
 	/**

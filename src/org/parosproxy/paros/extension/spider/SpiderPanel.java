@@ -26,6 +26,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.InputEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -69,6 +70,8 @@ public class SpiderPanel extends AbstractPanel {
         this.setLayout(new CardLayout());
         this.setSize(700, 214);
         this.setName("Spider");
+        // Andiparos: Set spider icon
+        this.setIcon(new ImageIcon(getClass().getResource("/resource/icons/spider.png")));
         this.add(getSplitPane(), getSplitPane().getName());
 			
 	}

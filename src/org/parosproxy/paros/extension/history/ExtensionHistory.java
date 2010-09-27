@@ -23,9 +23,11 @@ package org.parosproxy.paros.extension.history;
 import java.awt.EventQueue;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JOptionPane;
 
@@ -66,6 +68,7 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 	private PopupMenuExportMessage popupMenuExportMessage2 = null;
 	private PopupMenuExportResponse popupMenuExportResponse2 = null;
 	private PopupMenuTag popupMenuTag = null;
+	
 
 	/**
      * 
@@ -101,6 +104,7 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 		if (logPanel == null) {
 			logPanel = new LogPanel();
 			logPanel.setName("History");
+			logPanel.setIcon(new ImageIcon(getClass().getResource("/resource/icons/clock.png")));
 			logPanel.setExtension(this);
 		}
 		return logPanel;
@@ -456,4 +460,5 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 
 		return false;
 	}
+	
 }

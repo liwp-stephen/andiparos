@@ -22,6 +22,8 @@ package org.parosproxy.paros.view;
 
 import java.util.Vector;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -63,7 +65,9 @@ public class View implements ViewDelegate {
 		getWorkbench().getTabbedWork().add(getRequestPanel());
 		getWorkbench().getTabbedWork().add(getResponsePanel());
 
-		getWorkbench().getTabbedSelect().add(siteMapPanel, "Sites");
+		// Andiparos: Added sitemap icon
+		Icon siteMapIcon = new ImageIcon(getClass().getResource("/resource/icons/sitemap_color.png"));
+		getWorkbench().getTabbedSelect().addTab("Sites ", siteMapIcon, siteMapPanel);
 
 		getWorkbench().getTabbedWork().setAlternativeParent(mainFrame.getPaneDisplay());
 		getWorkbench().getTabbedStatus().setAlternativeParent(mainFrame.getPaneDisplay());
@@ -138,7 +142,6 @@ public class View implements ViewDelegate {
 		if (sessionDialog == null) {
 			sessionDialog = new SessionDialog(getMainFrame(), true, title, "Session");
 			sessionDialog.addParamPanel(ROOT, new SessionGeneralPanel());
-
 		}
 
 		sessionDialog.setTitle(title);
