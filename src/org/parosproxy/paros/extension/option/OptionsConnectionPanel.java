@@ -64,6 +64,7 @@ public class OptionsConnectionPanel extends AbstractParamPanel {
 	private JTextField txtProxyChainUserName = null;
 	private JTextField txtProxyChainPassword = null;
 	private JCheckBox chkProxyChainAuth = null;
+	//TODO: Zap options
     public OptionsConnectionPanel() {
         super();
  		initialize();

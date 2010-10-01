@@ -25,11 +25,16 @@ import java.awt.CardLayout;
 import java.awt.EventQueue;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.SwingConstants;
+
+import org.zaproxy.zap.view.MainToolbarPanel;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Dimension;
@@ -48,6 +53,15 @@ public class MainFrame extends AbstractFrame {
 	private org.parosproxy.paros.view.WorkbenchPanel paneStandard = null;
 	private org.parosproxy.paros.view.MainMenuBar mainMenuBar = null;
 	private JPanel paneDisplay = null;
+	
+	private MainToolbarPanel mainToolbarPanel = null;
+	private JToolBar footerToolbarPanel = null;
+	private JLabel alertHigh = null;
+	private JLabel alertMedium = null;
+	private JLabel alertLow = null;
+	private JLabel alertInfo = null;
+	
+	// ZAP Added footer
 
 	/**
 	 * This method initializes
@@ -67,7 +81,7 @@ public class MainFrame extends AbstractFrame {
 		this.setJMenuBar(getMainMenuBar());
 		this.setContentPane(getPaneContent());
 
-		this.setSize(800, 600);
+		this.setSize(1000, 800);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -92,10 +106,117 @@ public class MainFrame extends AbstractFrame {
 			paneContent.setEnabled(true);
 			paneContent.setPreferredSize(new Dimension(800, 600));
 			paneContent.setFont(new Font("Dialog", Font.PLAIN, 12));
+			// ZAP: Add MainToolbar
+			paneContent.add(getMainToolbarPanel(), null);
+			
 			paneContent.add(getPaneDisplay(), null);
-			paneContent.add(getTxtStatus(), null);
+			// ZAP: Remove the status line - its not really used and takes up space
+			//paneContent.add(getTxtStatus(), null);
+			paneContent.add(getFooterToolbarPanel(), null);
+			
 		}
 		return paneContent;
+	}
+	
+	private JLabel getAlertHigh(int alert) {
+		if (alertHigh == null) {
+			alertHigh = new JLabel();
+			alertHigh.setToolTipText("High priority alerts");
+
+		}
+		alertHigh.setText("" + alert);
+		return alertHigh;
+	}
+	
+	public void setAlertHigh (int alert) {
+		getAlertHigh(alert);
+	}
+
+	private JLabel getAlertMedium(int alert) {
+		if (alertMedium == null) {
+			alertMedium = new JLabel();
+			alertMedium.setToolTipText("Medium priority alerts");
+		}
+		alertMedium.setText("" + alert);
+		return alertMedium;
+	}
+	
+	public void setAlertMedium (int alert) {
+		getAlertMedium(alert);
+	}
+
+	private JLabel getAlertLow(int alert) {
+		if (alertLow == null) {
+			alertLow = new JLabel();
+			alertLow.setToolTipText("Low priority alerts");
+		}
+		alertLow.setText("" + alert);
+		return alertLow;
+	}
+	
+	public void setAlertLow (int alert) {
+		getAlertLow(alert);
+	}
+
+	private JLabel getAlertInfo(int alert) {
+		if (alertInfo == null) {
+			alertInfo = new JLabel();
+			alertInfo.setToolTipText("Informational alerts");
+		}
+		alertInfo.setText("" + alert);
+		return alertInfo;
+	}
+	
+	public void setAlertInfo (int alert) {
+		getAlertInfo(alert);
+	}
+
+	private JToolBar getFooterToolbarPanel() {
+		if (this.footerToolbarPanel == null) {
+			this.footerToolbarPanel = new JToolBar();
+			this.footerToolbarPanel.setFloatable(false);
+			this.footerToolbarPanel.setEnabled(true);
+			
+			this.footerToolbarPanel.add(new JLabel("<html>&nbsp;Alerts&nbsp;</html>"));
+			
+			this.footerToolbarPanel.add(new JLabel("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>"));
+			
+			JLabel flagHigh = new JLabel("<html>:&nbsp;</html>");
+			flagHigh.setToolTipText("High priority alerts");
+			ImageIcon iconHigh = new ImageIcon(getClass().getResource("/resource/icons/flag_red.png"));
+			flagHigh.setIcon(iconHigh);
+			this.footerToolbarPanel.add(flagHigh);
+			this.footerToolbarPanel.add(this.getAlertHigh(0));
+
+			this.footerToolbarPanel.add(new JLabel("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>"));
+
+			JLabel flagMedium = new JLabel("<html>:&nbsp;</html>");
+			flagMedium.setToolTipText("Medium priority alerts");
+			ImageIcon iconMedium = new ImageIcon(getClass().getResource("/resource/icons/flag_orange.png"));
+			flagMedium.setIcon(iconMedium);
+			this.footerToolbarPanel.add(flagMedium);
+			this.footerToolbarPanel.add(this.getAlertMedium(0));
+
+			this.footerToolbarPanel.add(new JLabel("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>"));
+
+			JLabel flagLow = new JLabel("<html>:&nbsp;</html>");
+			flagLow.setToolTipText("Low priority alerts");
+			ImageIcon iconLow = new ImageIcon(getClass().getResource("/resource/icons/flag_yellow.png"));
+			flagLow.setIcon(iconLow);
+			this.footerToolbarPanel.add(flagLow);
+			this.footerToolbarPanel.add(this.getAlertLow(0));
+
+			this.footerToolbarPanel.add(new JLabel("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>"));
+
+			JLabel flagInfo = new JLabel("<html>:&nbsp;</html>");
+			flagInfo.setToolTipText("Informational alerts");
+			ImageIcon iconInfo = new ImageIcon(getClass().getResource("/resource/icons/flag_blue.png"));
+			flagInfo.setIcon(iconInfo);
+			this.footerToolbarPanel.add(flagInfo);
+			this.footerToolbarPanel.add(this.getAlertInfo(0));
+
+		}
+		return this.footerToolbarPanel;
 	}
 
 	/**
@@ -178,5 +299,13 @@ public class MainFrame extends AbstractFrame {
 			paneDisplay.add(getWorkbench(), getWorkbench().getName());
 		}
 		return paneDisplay;
+	}
+	
+	// ZAP: Added main toolbar panel
+	public MainToolbarPanel getMainToolbarPanel() {
+		if (mainToolbarPanel == null) {
+			mainToolbarPanel = new MainToolbarPanel();
+		}
+		return mainToolbarPanel;
 	}
 }

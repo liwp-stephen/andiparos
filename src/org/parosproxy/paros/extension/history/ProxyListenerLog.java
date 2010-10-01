@@ -24,6 +24,8 @@ package org.parosproxy.paros.extension.history;
 import java.awt.EventQueue;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.HistoryList;
@@ -44,10 +46,17 @@ public class ProxyListenerLog implements ProxyListener {
 	private Model model = null;
 	private HistoryList historyList = null;
 	private Pattern pattern = null;
+	// TODO Remove
 	private Pattern uriFilterPattern = null;
 	private Pattern methodFilterPattern = null;
 	private boolean uriFilterPatternInverse = false;
+	
 	private boolean isFirstAccess = true;
+	// ZAP: filter log using a HistoryFilter
+	private HistoryFilter historyFilter = null;
+	
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(ProxyListenerLog.class);
 
 	public ProxyListenerLog(Model model, ViewDelegate view, HistoryList historyList) {
 		this.model = model;
@@ -61,6 +70,10 @@ public class ProxyListenerLog implements ProxyListener {
 		} else {
 			pattern = Pattern.compile(filter, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 		}
+	}
+	
+	public void setHistoryFilter (HistoryFilter historyFilter) {
+		this.historyFilter = historyFilter;
 	}
 
 	// AXEL: New HTTP method and URI filter
@@ -143,6 +156,8 @@ public class ProxyListenerLog implements ProxyListener {
 		try {
 			historyRef = new HistoryReference(model.getSession(), type, msg);
 		} catch (Exception e) {
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 			return;
 		}
 
@@ -155,6 +170,29 @@ public class ProxyListenerLog implements ProxyListener {
 		// TODO: AXEL... This code is really dirty... please cleanup
 		synchronized (historyList) {
 			if (type == HistoryReference.TYPE_MANUAL) {
+				
+				if (pattern == null && historyFilter == null) {
+                    addHistoryInEventQueue(historyRef);
+                } else if (historyFilter != null) {
+                	if (historyFilter.matches(historyRef)) {
+                        addHistoryInEventQueue(historyRef);
+                	}
+                } else {
+                    StringBuffer sb = new StringBuffer();
+                    sb.append(msg.getRequestHeader().toString());
+                    sb.append(msg.getRequestBody().toString());
+                    if (!msg.getResponseHeader().isEmpty()) {
+                        sb.append(msg.getResponseHeader().toString());
+                        sb.append(msg.getResponseBody().toString());
+                        
+                    }
+                    if (pattern.matcher(sb.toString()).find()) {
+                        addHistoryInEventQueue(historyRef);
+                    }
+                }
+				
+				//TODO: Old Andiparos Code
+				/*
 				String uri = msg.getRequestHeader().getURI().toString();
 				if (uriFilterPattern != null && pattern != null) {
 					if (uriFilterPattern.matcher(uri).find() && ifHeaderPatternMatches(msg, historyRef)) {
@@ -170,7 +208,8 @@ public class ProxyListenerLog implements ProxyListener {
 					}
 				} else {
 					addHistoryInEventQueue(historyRef);
-				}
+				}*/
+				
 			}
 		}
 
@@ -196,6 +235,8 @@ public class ProxyListenerLog implements ProxyListener {
 					}
 				});
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+            	log.warn(e.getMessage(), e);
 			}
 		}
 	}
@@ -211,6 +252,8 @@ public class ProxyListenerLog implements ProxyListener {
 					}
 				});
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+            	log.warn(e.getMessage(), e);
 			}
 		}
 	}

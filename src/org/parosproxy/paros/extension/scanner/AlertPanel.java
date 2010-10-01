@@ -21,11 +21,13 @@
 package org.parosproxy.paros.extension.scanner;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -34,6 +36,7 @@ import javax.swing.tree.TreePath;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.ViewDelegate;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.HttpPanel;
 
@@ -52,6 +55,12 @@ public class AlertPanel extends AbstractPanel {
 	
 	private JScrollPane paneScroll = null;
 	
+	// ZAP Added split pane panels
+	private JSplitPane splitPane = null;
+	private AlertViewPanel alertViewPanel = null;
+
+	private ExtensionHistory extHist = null; 
+	
     /**
      * 
      */
@@ -67,13 +76,34 @@ public class AlertPanel extends AbstractPanel {
 	 */
 	private void initialize() {
         this.setLayout(new CardLayout());
-        this.setSize(474, 251);
+        this.setSize(274, 251);
         this.setName("Alerts");
         // Andiparos: Set alert icon
         this.setIcon(new ImageIcon(getClass().getResource("/resource/icons/error.png")));
-        this.add(getPaneScroll(), getPaneScroll().getName());
-			
+        this.add(getSplitPane(), getSplitPane().getName());
 	}
+	
+	private JSplitPane getSplitPane() {
+		if (splitPane == null) {
+			splitPane = new JSplitPane();
+			splitPane.setName("Alert panels");
+			splitPane.setDividerSize(3);
+			splitPane.setDividerLocation(400);
+			splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+			splitPane.setLeftComponent(getPaneScroll());
+			splitPane.setRightComponent(getAlertViewPanel());
+			splitPane.setPreferredSize(new Dimension(100,200));
+		}
+		return splitPane;
+	}
+
+	public AlertViewPanel getAlertViewPanel() {
+		if (alertViewPanel == null) {
+			alertViewPanel = new AlertViewPanel();
+		}
+		return alertViewPanel;
+	}
+	
 	/**
 	 * This method initializes treeAlert	
 	 * 	
@@ -90,7 +120,24 @@ public class AlertPanel extends AbstractPanel {
 				    if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
 				    	// right mouse button
 				        view.getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
-				    }	
+				    }
+				    if (e.getClickCount() > 1) {
+				    	// ZAP: Its a double click - edit the alert
+					    DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeAlert.getLastSelectedPathComponent();
+					    if (node != null && node.getUserObject() != null) {
+					        Object obj = node.getUserObject();
+					        if (obj instanceof Alert) {
+					            Alert alert = (Alert) obj;
+							    setMessage(alert.getMessage());
+							    // ZAP: Display in right panel too
+							    getAlertViewPanel().displayAlert(alert);
+					        } else {
+							    getAlertViewPanel().clearAlert();
+					        }
+					    } else {
+						    getAlertViewPanel().clearAlert();
+					    }
+				    }
 				}
 			});
 			treeAlert.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() { 

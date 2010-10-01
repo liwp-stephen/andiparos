@@ -154,7 +154,10 @@ public class MenuFileControl implements SessionListener {
 			waitMessageDialog = view.getWaitMessageDialog("Saving session file.  Please wait ...");
 			session.save(session.getFileName(), this);
 			log.info("saving session file " + session.getFileName());
-			waitMessageDialog.setVisible(true);
+			// ZAP: If the save is quick the dialog can already be null here
+    	    if (waitMessageDialog != null) {
+    	    	waitMessageDialog.setVisible(true);
+    	    }
 
 		} catch (Exception e) {
 			view.showWarningDialog("Error saving session file.");
@@ -180,7 +183,7 @@ public class MenuFileControl implements SessionListener {
 			}
 
 			public String getDescription() {
-				return "Paros session";
+				return "Andiparos session";
 			}
 		});
 		File file = null;
@@ -206,14 +209,26 @@ public class MenuFileControl implements SessionListener {
 			}
 		}
 	}
-
+	
+	private void setTitle() {
+        if (model.getSession().isNewState()) {
+			// No file name
+			view.getMainFrame().setTitle(model.getSession().getSessionName() + " - " + Constant.PROGRAM_NAME);
+		} else {
+	        File file = new File(model.getSession().getFileName());
+			view.getMainFrame().setTitle(
+					model.getSession().getSessionName() + " - " +
+					file.getName().replaceAll(".session\\z","") + " - " + 
+					Constant.PROGRAM_NAME);
+		}
+	}
+	
 	public void properties() {
 		SessionDialog dialog = view.getSessionDialog("Session Properties");
 		dialog.initParam(model.getSession());
 		dialog.showDialog(false);
-		// view.getMainFrame().setTitle(Constant.PROGRAM_NAME + " " +
-		// Constant.PROGRAM_VERSION + " - " +
-		// model.getSession().getSessionName());
+		// ZAP: Set the title consistently
+	    setTitle();
 	}
 
 	/*
@@ -226,7 +241,8 @@ public class MenuFileControl implements SessionListener {
 	public void sessionOpened(File file, Exception e) {
 		if (e == null) {
 			control.getExtensionLoader().sessionChangedAllPlugin(model.getSession());
-			view.getMainFrame().setTitle(file.getName().replaceAll(".session\\z", "") + " - " + Constant.PROGRAM_NAME);
+			// ZAP: Set the title consistently
+			setTitle();
 		} else {
 			view.showWarningDialog("Error opening session file");
 			log.error("error opening session file " + file.getAbsolutePath());
@@ -249,8 +265,8 @@ public class MenuFileControl implements SessionListener {
 	public void sessionSaved(Exception e) {
 		if (e == null) {
 			view.getMainFrame().getMainMenuBar().getMenuFileSave().setEnabled(true);
-			File file = new File(model.getSession().getFileName());
-			view.getMainFrame().setTitle(file.getName().replaceAll(".session\\z", "") + " - " + Constant.PROGRAM_NAME);
+			// ZAP: Set the title consistently
+            setTitle();
 		} else {
 			view.showWarningDialog("Error saving session file.");
 			e.printStackTrace();

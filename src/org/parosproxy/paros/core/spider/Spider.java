@@ -85,7 +85,8 @@ public class Spider {
 			msg = new HttpMessage(uri);
 			addSeed(msg);
 		} catch (HttpMalformedHeaderException e) {
-			e.printStackTrace();
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 
 	}
@@ -108,7 +109,8 @@ public class Spider {
 			addQueue(msg, 0);
 
 		} catch (URIException e) {
-			e.printStackTrace();
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 
 	}
@@ -130,6 +132,8 @@ public class Spider {
 				item = new QueueItem(session,
 						HistoryReference.TYPE_SPIDER_SEED, msg);
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+	        	log.warn(e.getMessage(), e);
 				return false;
 			}
 
@@ -241,7 +245,8 @@ public class Spider {
 					.getURI(), percentage);
 			Thread.sleep(100);
 		} catch (Exception e) {
-
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 	}
 
@@ -338,7 +343,8 @@ public class Spider {
 			}
 
 		} catch (URIException e) {
-			e.printStackTrace();
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 		return false;
 	}
@@ -359,6 +365,8 @@ public class Spider {
 				}
 			}
 		} catch (URIException e) {
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 
 	}
@@ -384,7 +392,8 @@ public class Spider {
 				return true;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 
 		return false;
@@ -403,6 +412,8 @@ public class Spider {
 		try {
 			item = new QueueItem(session, HistoryReference.TYPE_SPIDER_VISITED, msg);
 		} catch (Exception e) {
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 			return;
 		}
 
@@ -420,7 +431,8 @@ public class Spider {
 					msg.getRequestHeader().getURI().toString(),
 					msg.getRequestBody().toString());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 		return false;
 	}

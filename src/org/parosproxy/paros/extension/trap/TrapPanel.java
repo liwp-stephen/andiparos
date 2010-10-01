@@ -33,6 +33,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.HttpPanel;
 
@@ -136,7 +137,7 @@ public class TrapPanel extends HttpPanel {
 	public JCheckBox getChkTrapRequestOnce() {
 		if (chkTrapRequestOnce == null) {
 			chkTrapRequestOnce = new JCheckBox();
-			chkTrapRequestOnce.setText("Next Request");
+			chkTrapRequestOnce.setText(Constant.messages.getString("trap.methods.one_request"));
 			chkTrapRequestOnce.addItemListener(new ItemListener() { 
 				public void itemStateChanged(ItemEvent e) {    
 
@@ -160,7 +161,7 @@ public class TrapPanel extends HttpPanel {
 	public JCheckBox getChkTrapRequest() {
 		if (chkTrapRequest == null) {
 			chkTrapRequest = new JCheckBox();
-			chkTrapRequest.setText("Request");
+			chkTrapRequest.setText(Constant.messages.getString("trap.methods.request"));
 			chkTrapRequest.addItemListener(new ItemListener() { 
 				public void itemStateChanged(ItemEvent e) {    
 
@@ -184,7 +185,7 @@ public class TrapPanel extends HttpPanel {
 	public JCheckBox getChkTrapResponse() {
 		if (chkTrapResponse == null) {
 			chkTrapResponse = new JCheckBox();
-			chkTrapResponse.setText("Response");
+			chkTrapResponse.setText(Constant.messages.getString("trap.methods.response"));
 			chkTrapResponse.addItemListener(new ItemListener() { 
 
 				public void itemStateChanged(ItemEvent e) {    
@@ -208,7 +209,7 @@ public class TrapPanel extends HttpPanel {
 	private JButton getBtnContinue() {
 		if (btnContinue == null) {
 			btnContinue = new JButton();
-			btnContinue.setText("Continue");
+			btnContinue.setText(Constant.messages.getString("trap.actions.continue"));
 			btnContinue.addActionListener(new ActionListener() { 
 				public void actionPerformed(ActionEvent ae) {  
 					setContinue(true);
@@ -226,7 +227,7 @@ public class TrapPanel extends HttpPanel {
 	private JButton getBtnContinueAndTag() {
 		if (btnContinueAndTag == null) {
 			btnContinueAndTag = new JButton();
-			btnContinueAndTag.setText("Tag");
+			btnContinueAndTag.setText(Constant.messages.getString("trap.actions.mark"));
 			btnContinueAndTag.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					setFlagPackage(true);
@@ -245,7 +246,7 @@ public class TrapPanel extends HttpPanel {
 	private JButton getBtnDrop() {
 		if (btnDrop == null) {
 			btnDrop = new JButton();
-			btnDrop.setText("Drop");
+			btnDrop.setText(Constant.messages.getString("trap.actions.drop"));
 			btnDrop.addActionListener(new ActionListener() { 
 				public void actionPerformed(ActionEvent e) {
 				    TrapPanel.this.setMessage("","", false);

@@ -26,6 +26,8 @@ import javax.swing.JTextArea;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
@@ -46,6 +48,9 @@ public class ProxyListenerTrap implements ProxyListener {
 	private TrapPanel trapPanel = null;
 	private TrapParam trapParam = null;
 	private Model model = null;
+	
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(ProxyListenerTrap.class);
 
 	public ProxyListenerTrap(Model model, TrapParam trapParam) {
 	    this.model = model;
@@ -96,7 +101,10 @@ public class ProxyListenerTrap implements ProxyListener {
 					View.getSingleton().getMainFrame().toFront();
 				}
 			});
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
+		}
 	}
 	
 	private void setHttpDisplay(final HttpPanel httpPanel, final HttpMessage msg, final boolean isRequest) {
@@ -107,6 +115,8 @@ public class ProxyListenerTrap implements ProxyListener {
 				}
 			});
 		} catch (Exception e) {
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 		
 	}
@@ -117,7 +127,8 @@ public class ProxyListenerTrap implements ProxyListener {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				// ZAP: Log exceptions
+	        	log.warn(e.getMessage(), e);
 			}
 		}
 		try {
@@ -134,7 +145,8 @@ public class ProxyListenerTrap implements ProxyListener {
 				}
 			});
 		} catch (Exception ie) {
-			//logPane.append(ERROR_LOG, ie.getMessage());
+			// ZAP: Log exceptions
+        	log.warn(ie.getMessage(), ie);
 		}
 		
 	}

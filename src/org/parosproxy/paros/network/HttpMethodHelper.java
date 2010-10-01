@@ -56,10 +56,8 @@ public class HttpMethodHelper {
 
 	private static final String CRLF = "\r\n";
 	private static final String LF = "\n";
-	private static final Pattern patternCRLF = Pattern.compile("\\r\\n",
-			Pattern.MULTILINE);
-	private static final Pattern patternLF = Pattern.compile("\\n",
-			Pattern.MULTILINE);
+	private static final Pattern patternCRLF = Pattern.compile("\\r\\n", Pattern.MULTILINE);
+	private static final Pattern patternLF = Pattern.compile("\\n",	Pattern.MULTILINE);
 
 	private String mUserAgent = "";
 

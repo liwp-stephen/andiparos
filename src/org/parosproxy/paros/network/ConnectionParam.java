@@ -25,6 +25,8 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.common.AbstractParam;
 
 /**
@@ -34,7 +36,7 @@ import org.parosproxy.paros.common.AbstractParam;
  */
 public class ConnectionParam extends AbstractParam {
 
-	// private static final String CONNECTION = "connection";
+	//TODO: Maybe include chainproxyprompt option of ZAP
 
 	private static final String PROXY_CHAIN_NAME = "connection.proxyChain.hostName";
 	private static final String PROXY_CHAIN_PORT = "connection.proxyChain.port";
@@ -52,6 +54,10 @@ public class ConnectionParam extends AbstractParam {
 	private HttpState httpState = null;
 	private boolean httpStateEnabled = false;
 	private Vector<HostAuthentication> listAuth = new Vector<HostAuthentication>();
+	
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(ConnectionParam.class);
+
 
 	private Pattern patternSkip = null;
 

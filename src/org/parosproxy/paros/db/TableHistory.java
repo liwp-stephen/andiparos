@@ -32,17 +32,14 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-/**
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class TableHistory extends AbstractTable {
 
 	private static final String HISTORYID = "HISTORYID";
@@ -59,6 +56,8 @@ public class TableHistory extends AbstractTable {
 	private static final String RESBODY = "RESBODY";
 	private static final String TAG = "TAG";
 	private static final String FLAG = "FLAG";
+	// ZAP: Added NOTE field to history table
+    private static final String NOTE = "NOTE";
 
 	private PreparedStatement psRead = null;
 	private PreparedStatement psWrite1 = null;
@@ -68,8 +67,12 @@ public class TableHistory extends AbstractTable {
 	private PreparedStatement psContainsURI = null;
 	private PreparedStatement psUpdateTag = null;
 	private PreparedStatement psUpdateFlag = null;
+	private PreparedStatement psUpdateNote = null;
 
 	private static boolean isExistStatusCode = false;
+	
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(TableHistory.class);
 
 	public TableHistory() {
 	}
@@ -86,14 +89,47 @@ public class TableHistory extends AbstractTable {
 			isExistStatusCode = true;
 		}
 		rs.close();
+		
+		// ZAP: Added support for the tag when creating a history record
+		// Andiparos: Previously used FLAG only. There was no tag. Switched position of STATUSCODE and TAG
 		if (isExistStatusCode) {
-			psWrite1 = conn.prepareStatement("INSERT INTO HISTORY (" + SESSIONID + "," + HISTTYPE + "," + TIMESENTMILLIS + "," + TIMEELAPSEDMILLIS + "," + METHOD + "," + URI + ","
-					+ REQHEADER + "," + REQBODY + "," + RESHEADER + "," + RESBODY + "," + STATUSCODE + "," + FLAG + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			psWrite1 = conn.prepareStatement("INSERT INTO HISTORY ("
+					+ SESSIONID + "," + HISTTYPE + "," + TIMESENTMILLIS + ","
+					+ TIMEELAPSEDMILLIS + "," + METHOD + "," + URI + ","
+					+ REQHEADER + "," + REQBODY + "," + RESHEADER + ","
+					+ RESBODY + "," + STATUSCODE + "," + TAG + "," + FLAG
+					+ ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		} else {
-			psWrite1 = conn.prepareStatement("INSERT INTO HISTORY (" + SESSIONID + "," + HISTTYPE + "," + TIMESENTMILLIS + "," + TIMEELAPSEDMILLIS + "," + METHOD + "," + URI + ","
-					+ REQHEADER + "," + REQBODY + "," + RESHEADER + "," + RESBODY + "," + FLAG + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			psWrite1 = conn.prepareStatement("INSERT INTO HISTORY ("
+					+ SESSIONID + "," + HISTTYPE + "," + TIMESENTMILLIS + ","
+					+ TIMEELAPSEDMILLIS + "," + METHOD + "," + URI + ","
+					+ REQHEADER + "," + REQBODY + "," + RESHEADER + ","
+					+ RESBODY + "," + TAG + "," + FLAG
+					+ ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		}
+		
+		
+		/*if (isExistStatusCode) {
+			psWrite1 = conn.prepareStatement("INSERT INTO HISTORY ("
+					+ SESSIONID + "," + HISTTYPE + "," + TIMESENTMILLIS + ","
+					+ TIMEELAPSEDMILLIS + "," + METHOD + "," + URI + ","
+					+ REQHEADER + "," + REQBODY + "," + RESHEADER + ","
+					+ RESBODY + "," + STATUSCODE + "," + FLAG
+					+ ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		} else {
+			psWrite1 = conn.prepareStatement("INSERT INTO HISTORY ("
+					+ SESSIONID + "," + HISTTYPE + "," + TIMESENTMILLIS + ","
+					+ TIMEELAPSEDMILLIS + "," + METHOD + "," + URI + ","
+					+ REQHEADER + "," + REQBODY + "," + RESHEADER + ","
+					+ RESBODY + "," + FLAG
+					+ ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		}*/
+		
+		
+		
+		
 		psWrite2 = conn.prepareCall("CALL IDENTITY();");
 
 		rs = conn.getMetaData().getColumns(null, null, "HISTORY", "TAG");
@@ -104,9 +140,23 @@ public class TableHistory extends AbstractTable {
 		rs.close();
 
 		psUpdateTag = conn.prepareStatement("UPDATE HISTORY SET TAG = ? WHERE HISTORYID = ?");
+		
+		// Andiparos: Flag support
 		psUpdateFlag = conn.prepareStatement("UPDATE HISTORY SET FLAG = ? WHERE HISTORYID = ?");
+		
+		// ZAP: Add the NOTE column to the db if necessary
+        rs = conn.getMetaData().getColumns(null, null, "HISTORY", "NOTE");
+        if (!rs.next()) {
+            PreparedStatement stmt = conn.prepareStatement("ALTER TABLE HISTORY ADD COLUMN NOTE VARCHAR DEFAULT ''");
+            stmt.execute();
+        }
+        rs.close();
+
+       	psUpdateNote = conn.prepareStatement("UPDATE HISTORY SET NOTE = ? WHERE HISTORYID = ?");
 
 	}
+
+// TODO Support multiple tags
 
 	public synchronized RecordHistory read(int historyId) throws HttpMalformedHeaderException, SQLException {
 		psRead.setInt(1, historyId);
@@ -144,12 +194,17 @@ public class TableHistory extends AbstractTable {
 			flag = msg.getFlag();
 		}
 
-		return write(sessionId, histType, msg.getTimeSentMillis(), msg.getTimeElapsedMillis(), method, uri, statusCode, reqHeader, reqBody, resHeader, resBody, flag);
+		//return write(sessionId, histType, msg.getTimeSentMillis(), msg.getTimeElapsedMillis(), method, uri, statusCode, reqHeader, reqBody, resHeader, resBody, flag);
+		//return write(sessionId, histType, msg.getTimeSentMillis(), msg.getTimeElapsedMillis(), method, uri, statusCode, reqHeader, reqBody, resHeader, resBody, flag, msg.getTag());
+		return write(sessionId, histType, msg.getTimeSentMillis(), msg.getTimeElapsedMillis(), method, uri, statusCode, reqHeader, reqBody, resHeader, resBody, null, flag);
 
 	}
 
-	private synchronized RecordHistory write(long sessionId, int histType, long timeSentMillis, int timeElapsedMillis, String method, String uri, int statusCode, String reqHeader,
-			String reqBody, String resHeader, String resBody, Boolean flag) throws HttpMalformedHeaderException, SQLException {
+	
+	private synchronized RecordHistory write(long sessionId, int histType,
+			long timeSentMillis, int timeElapsedMillis, String method, String uri,
+			int statusCode, String reqHeader, String reqBody, String resHeader,
+			String resBody, String tag, Boolean flag) throws HttpMalformedHeaderException, SQLException {
 
 		psWrite1.setLong(1, sessionId);
 		psWrite1.setInt(2, histType);
@@ -161,13 +216,17 @@ public class TableHistory extends AbstractTable {
 		psWrite1.setString(8, reqBody);
 		psWrite1.setString(9, resHeader);
 		psWrite1.setString(10, resBody);
-
+		
+		// Andiparos: Handling for Flag and Tag
 		if (isExistStatusCode) {
 			psWrite1.setInt(11, statusCode);
-			psWrite1.setBoolean(12, flag);
+			psWrite1.setString(12, tag);
+			psWrite1.setBoolean(13, flag);
 		} else {
-			psWrite1.setBoolean(11, flag);
+			psWrite1.setString(11, tag);
+			psWrite1.setBoolean(12, flag);
 		}
+		
 		psWrite1.executeUpdate();
 
 		psWrite2.executeQuery();
@@ -181,9 +240,20 @@ public class TableHistory extends AbstractTable {
 	private RecordHistory build(ResultSet rs) throws HttpMalformedHeaderException, SQLException {
 		RecordHistory history = null;
 		if (rs.next()) {
-			history = new RecordHistory(rs.getInt(HISTORYID), rs.getInt(HISTTYPE), rs.getLong(SESSIONID), rs.getLong(TIMESENTMILLIS),
-					rs.getInt(TIMEELAPSEDMILLIS), rs.getString(REQHEADER), rs.getString(REQBODY), rs.getString(RESHEADER),
-					rs.getString(RESBODY), rs.getString(TAG), rs.getBoolean(FLAG));
+			history = new RecordHistory(
+					rs.getInt(HISTORYID),
+					rs.getInt(HISTTYPE),
+					rs.getLong(SESSIONID),
+					rs.getLong(TIMESENTMILLIS),
+					rs.getInt(TIMEELAPSEDMILLIS),
+					rs.getString(REQHEADER),
+					rs.getString(REQBODY),
+					rs.getString(RESHEADER),
+					rs.getString(RESBODY),
+					rs.getString(TAG),
+					rs.getBoolean(FLAG), // Andiparos: Added Flag
+					rs.getString(NOTE)	 // ZAP: Added note
+			);
 		}
 		return history;
 
@@ -251,7 +321,7 @@ public class TableHistory extends AbstractTable {
 		return v;
 	}
 
-	/* Axel: URI filter */
+	/* Andiparos: URI filter */
 	public List<Integer> getFilteredHistoryList(long sessionId, int histType, String methodFilter, String uriFilter, boolean uriFilterInverse) throws SQLException {
 		PreparedStatement psReadSearch = getConnection().prepareStatement("SELECT * FROM HISTORY WHERE " + SESSIONID + " = ? AND " + HISTTYPE + " = ? ORDER BY " + HISTORYID);
 
@@ -346,36 +416,23 @@ public class TableHistory extends AbstractTable {
 	public RecordHistory getHistoryCache(HistoryReference ref, HttpMessage reqMsg) throws SQLException, HttpMalformedHeaderException {
 
 		// get the cache from provided reference.
-		// naturally, the obtained cache should be AFTER AND NEARBY to the given
-		// reference.
+		// naturally, the obtained cache should be AFTER AND NEARBY to the given reference.
 		// - historyId up to historyId+200
 		// - match sessionId
-		// - history type can be MANUEL or hidden (hidden is used by images not
-		// explicitly stored in history)
+		// - history type can be MANUEL or hidden (hidden is used by images not explicitly stored in history)
 		// - match URI
 		PreparedStatement psReadCache = null;
 
 		if (isExistStatusCode) {
-			// psReadCache =
-			// getConnection().prepareStatement("SELECT TOP 1 * FROM HISTORY WHERE URI = ? AND METHOD = ? AND REQBODY = ? AND "
-			// + HISTORYID + " >= ? AND " + HISTORYID +
-			// " <= ? AND SESSIONID = ? AND (HISTTYPE = " +
-			// HistoryReference.TYPE_MANUAL + " OR HISTTYPE = " +
-			// HistoryReference.TYPE_HIDDEN + ") AND STATUSCODE != 304");
 			psReadCache = getConnection().prepareStatement(
 					"SELECT TOP 1 * FROM HISTORY WHERE URI = ? AND METHOD = ? AND REQBODY = ? AND " + HISTORYID + " >= ? AND " + HISTORYID + " <= ? AND SESSIONID = ? AND STATUSCODE != 304");
 
 		} else {
-			// psReadCache =
-			// getConnection().prepareStatement("SELECT * FROM HISTORY WHERE URI = ? AND METHOD = ? AND REQBODY = ? AND "
-			// + HISTORYID + " >= ? AND " + HISTORYID +
-			// " <= ? AND SESSIONID = ? AND (HISTTYPE = " +
-			// HistoryReference.TYPE_MANUAL + " OR HISTTYPE = " +
-			// HistoryReference.TYPE_HIDDEN + ")");
 			psReadCache = getConnection().prepareStatement(
 					"SELECT * FROM HISTORY WHERE URI = ? AND METHOD = ? AND REQBODY = ? AND " + HISTORYID + " >= ? AND " + HISTORYID + " <= ? AND SESSIONID = ?)");
 
 		}
+		
 		psReadCache.setString(1, reqMsg.getRequestHeader().getURI().toString());
 		psReadCache.setString(2, reqMsg.getRequestHeader().getMethod());
 		psReadCache.setString(3, reqMsg.getRequestBody().toString(HttpBody.STORAGE_CHARSET));
@@ -391,10 +448,8 @@ public class TableHistory extends AbstractTable {
 		try {
 			do {
 				rec = build(rs);
-				// for retrieval from cache, the message requests nature must be
-				// the same.
-				// and the result should NOT be NOT_MODIFIED for rendering by
-				// browser
+				// for retrieval from cache, the message requests nature must be the same.
+				// and the result should NOT be NOT_MODIFIED for rendering by browser
 				if (rec != null && rec.getHttpMessage().equals(reqMsg) && rec.getHttpMessage().getResponseHeader().getStatusCode() != HttpStatusCode.NOT_MODIFIED) {
 					return rec;
 				}
@@ -406,6 +461,8 @@ public class TableHistory extends AbstractTable {
 				rs.close();
 				psReadCache.close();
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+            	log.warn(e.getMessage(), e);
 			}
 		}
 
@@ -413,20 +470,11 @@ public class TableHistory extends AbstractTable {
 		// lookup from cache BEFORE the given reference
 
 		if (isExistStatusCode) {
-			// psReadCache =
-			// getConnection().prepareStatement("SELECT TOP 1 * FROM HISTORY WHERE URI = ? AND METHOD = ? AND REQBODY = ? AND SESSIONID = ? AND STATUSCODE != 304 AND (HISTTYPE = "
-			// + HistoryReference.TYPE_MANUAL + " OR HISTTYPE = " +
-			// HistoryReference.TYPE_HIDDEN + ")");
 			psReadCache = getConnection().prepareStatement("SELECT TOP 1 * FROM HISTORY WHERE URI = ? AND METHOD = ? AND REQBODY = ? AND SESSIONID = ? AND STATUSCODE != 304");
-
 		} else {
-			// psReadCache =
-			// getConnection().prepareStatement("SELECT * FROM HISTORY WHERE URI = ? AND METHOD = ? AND REQBODY = ? AND SESSIONID = ? AND (HISTTYPE = "
-			// + HistoryReference.TYPE_MANUAL + " OR HISTTYPE = " +
-			// HistoryReference.TYPE_HIDDEN + ")");
 			psReadCache = getConnection().prepareStatement("SELECT * FROM HISTORY WHERE URI = ? AND METHOD = ? AND REQBODY = ? AND SESSIONID = ?");
-
 		}
+		
 		psReadCache.setString(1, reqMsg.getRequestHeader().getURI().toString());
 		psReadCache.setString(2, reqMsg.getRequestHeader().getMethod());
 		psReadCache.setString(3, reqMsg.getRequestBody().toString(HttpBody.STORAGE_CHARSET));
@@ -450,6 +498,8 @@ public class TableHistory extends AbstractTable {
 				rs.close();
 				psReadCache.close();
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+            	log.warn(e.getMessage(), e);
 			}
 
 		}
@@ -468,5 +518,11 @@ public class TableHistory extends AbstractTable {
 		psUpdateFlag.setInt(2, historyId);
 		psUpdateFlag.execute();
 	}
+	
+	public void updateNote(int historyId, String note) throws SQLException {
+        psUpdateNote.setString(1, note);
+        psUpdateNote.setInt(2, historyId);
+        psUpdateNote.execute();
+    }
 
 }

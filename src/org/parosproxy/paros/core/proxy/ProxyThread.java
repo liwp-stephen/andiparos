@@ -130,7 +130,7 @@ class ProxyThread implements Runnable {
 				processHttp(firstHeader, isSecure);
 			}
 		} catch (IOException e) {
-		    log.warn(e.getMessage());
+		    log.warn(e.getMessage(), e);
 
 		} finally {
             proxyThreadList.remove(thread);

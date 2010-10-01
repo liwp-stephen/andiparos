@@ -31,6 +31,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JOptionPane;
 
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
@@ -38,6 +39,14 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.HistoryList;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.zap.extension.history.AlertAddDialog;
+import org.zaproxy.zap.extension.history.HistoryFilterPlusDialog;
+import org.zaproxy.zap.extension.history.ManageTagsDialog;
+import org.zaproxy.zap.extension.history.NotesAddDialog;
+import org.zaproxy.zap.extension.history.PopupMenuAlert;
+import org.zaproxy.zap.extension.history.PopupMenuExportURLs;
+import org.zaproxy.zap.extension.history.PopupMenuNote;
+import org.zaproxy.zap.extension.history.PopupMenuTag;
 
 /**
  * 
@@ -56,6 +65,8 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 	private String filter = "";
 
 	private HistoryFilterDialog filterDialog = null;
+	// ZAP: added filter plus dialog
+	private HistoryFilterPlusDialog filterPlusDialog = null;
 	private JCheckBoxMenuItem menuFilterHistoryByRequest = null;
 	private JCheckBoxMenuItem menuFilterHistoryByResponse = null;
 	private int stateFilter = FILTER_NONE;
@@ -63,11 +74,21 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 	private PopupMenuDeleteHistory popupMenuDeleteHistory = null;
 	private PopupMenuPurgeHistory popupMenuPurgeHistory = null;
 	private PopupMenuResend popupMenuResend = null;
+	// ZAP: added resend to history panel
+	private PopupMenuResendSites popupMenuResendSites = null;
 	private ManualRequestEditorDialog resendDialog = null;
 
 	private PopupMenuExportMessage popupMenuExportMessage2 = null;
 	private PopupMenuExportResponse popupMenuExportResponse2 = null;
 	private PopupMenuTag popupMenuTag = null;
+	// ZAP: Added Export URLs
+	private PopupMenuExportURLs popupMenuExportURLs = null;
+    // ZAP: Added history notes
+    private PopupMenuNote popupMenuNote = null;
+	private NotesAddDialog dialogNotesAdd = null;
+	private AlertAddDialog dialogAlertAdd = null;
+	private ManageTagsDialog manageTags = null;
+    private PopupMenuAlert popupMenuAlert = null;
 	
 
 	/**
@@ -100,7 +121,7 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 	 * 
 	 * @return com.proofsecure.paros.extension.history.LogPanel
 	 */
-	LogPanel getLogPanel() {
+	public LogPanel getLogPanel() {
 		if (logPanel == null) {
 			logPanel = new LogPanel();
 			logPanel.setName("History");
@@ -118,27 +139,31 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 		if (getView() != null) {
 			ExtensionHookView pv = extensionHook.getHookView();
 			pv.addStatusPanel(getLogPanel());
-			// pv.addWorkPanel(getRequestPanel());
-			// pv.addWorkPanel(getResponsePanel());
+			
 			getLogPanel().setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
 
-			// extensionHook.getHookMenu().addViewMenuItem(getPopupMenuEmbeddedBrowser2());
 			extensionHook.getHookMenu().addViewMenuItem(extensionHook.getHookMenu().getMenuSeparator());
-			extensionHook.getHookMenu().addViewMenuItem(getMenuFilterHistoryByRequest());
-			extensionHook.getHookMenu().addViewMenuItem(getMenuFilterHistoryByResponse());
+			// ZAP Removed 'Filter History by..' menu iteams - replaced by filter plus
+			//extensionHook.getHookMenu().addViewMenuItem(getMenuFilterHistoryByRequest());
+			//extensionHook.getHookMenu().addViewMenuItem(getMenuFilterHistoryByResponse());
 
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuResend());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuTag());
-
-			// extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportMessage());
-			// extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportResponse());
+			
+			// ZAP: Added history notes
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuNote());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAlert());
 
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuDeleteHistory());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuPurgeHistory());
 
-			// same as PopupMenuExport but for File menu
-			extensionHook.getHookMenu().addFileMenuItem(getPopupMenuExportMessage2());
-			extensionHook.getHookMenu().addFileMenuItem(getPopupMenuExportResponse2());
+            // ZAP: Move 'export' menu items to Report menu
+	        extensionHook.getHookMenu().addReportMenuItem(getPopupMenuExportMessage2());
+            extensionHook.getHookMenu().addReportMenuItem(getPopupMenuExportResponse2());
+            extensionHook.getHookMenu().addReportMenuItem(getPopupMenuExportURLs());
+            
+            // ZAP added resend popup
+	        extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuResendSites());
 		}
 
 	}
@@ -174,6 +199,7 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 
 			buildHistory(getHistoryList(), list);
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -202,9 +228,24 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 				List<Integer> list = getModel().getDb().getTableHistory().getHistoryList(session.getSessionId(), HistoryReference.TYPE_MANUAL, filter, isRequest);
 				buildHistory(getHistoryList(), list);
 			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 
+	}
+	
+	private void searchHistory(HistoryFilter historyFilter) {
+	    Session session = getModel().getSession();
+        
+	    synchronized (historyList) {
+	        try {
+	            List<Integer> list = getModel().getDb().getTableHistory().getHistoryList(session.getSessionId(), HistoryReference.TYPE_MANUAL);
+	            
+	            buildHistory(getHistoryList(), list, historyFilter);
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	    }
 	}
 
 	public void searchHistoryByURI(String[] filter, boolean uriFilterInverse) {
@@ -230,29 +271,53 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 			historyList.clear();
 
 			for (int i = 0; i < dbList.size(); i++) {
+				//TODO Casting (Integer) is not necessary
 				int historyId = ((Integer) dbList.get(i)).intValue();
 
 				try {
 					historyRef = new HistoryReference(historyId);
 					historyList.addElement(historyRef);
 				} catch (Exception e) {
-				}
-				;
+					e.printStackTrace();
+				};
 			}
 		}
 
 	}
+	
+	private void buildHistory(HistoryList historyList, List<Integer> dbList, HistoryFilter historyFilter) {
+	    HistoryReference historyRef = null;
+	    synchronized (historyList) {
+	        historyList.clear();
+	        
+	        for (int i=0; i<dbList.size(); i++) {
+	            int historyId = (dbList.get(i)).intValue();
 
-	/**
-	 * This method initializes filterDialog
-	 * 
-	 * @return com.proofsecure.paros.extension.history.SearchDialog
-	 */
+	            try {
+                    historyRef = new HistoryReference(historyId);
+                    if (historyFilter.matches(historyRef)) {
+                    	historyList.addElement(historyRef);
+                    }
+	            } catch (Exception e) {
+	            	e.printStackTrace();
+	            };
+	        }
+	    }
+	}
+
 	private HistoryFilterDialog getFilterDialog() {
 		if (filterDialog == null) {
 			filterDialog = new HistoryFilterDialog(getView().getMainFrame(), true);
 		}
 		return filterDialog;
+	}
+	
+	private HistoryFilterPlusDialog getFilterPlusDialog() {
+		if (filterPlusDialog == null) {
+			filterPlusDialog = 
+				new HistoryFilterPlusDialog(getView().getMainFrame(), true);
+		}
+		return filterPlusDialog;
 	}
 
 	/**
@@ -315,6 +380,35 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 			result = -1; // reset
 		}
 
+		return result;
+	}
+	
+	protected int showFilterPlusDialog() {
+		HistoryFilterPlusDialog dialog = getFilterPlusDialog();
+		dialog.setModal(true);
+    	try {
+			dialog.setAllTags(getModel().getDb().getTableTag().getAllTags());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		int exit = dialog.showDialog();
+		int result = 0;		// cancel, state unchanged
+		HistoryFilter historyFilter = dialog.getFilter();
+		if (exit == JOptionPane.OK_OPTION) {
+		    getProxyListenerLog().setHistoryFilter(historyFilter);
+		    searchHistory(historyFilter);
+		    logPanel.setFilterStatus(historyFilter);
+		    result = 1;		// applied
+		    
+		} else if (exit == JOptionPane.NO_OPTION) {
+		    getProxyListenerLog().setHistoryFilter(historyFilter);
+		    searchHistory(historyFilter);
+		    logPanel.setFilterStatus(historyFilter);
+		    result = -1;	// reset
+		}
+		
 		return result;
 	}
 
@@ -435,7 +529,6 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 		if (popupMenuExportResponse2 == null) {
 			popupMenuExportResponse2 = new PopupMenuExportResponse();
 			popupMenuExportResponse2.setExtension(this);
-
 		}
 		return popupMenuExportResponse2;
 	}
@@ -444,10 +537,92 @@ public class ExtensionHistory extends ExtensionAdaptor implements SessionChanged
 		if (popupMenuTag == null) {
 			popupMenuTag = new PopupMenuTag();
 			popupMenuTag.setExtension(this);
-
 		}
 		return popupMenuTag;
 	}
+	
+	private PopupMenuNote getPopupMenuNote() {
+		if (popupMenuNote == null) {
+			popupMenuNote = new PopupMenuNote();
+			popupMenuNote.setExtension(this);
+		}
+		return popupMenuNote;
+	}
+
+	private PopupMenuAlert getPopupMenuAlert() {
+		if (popupMenuAlert == null) {
+			popupMenuAlert = new PopupMenuAlert();
+			popupMenuAlert.setExtension(this);
+		}
+		return popupMenuAlert;
+	}
+	
+	// ZAP added
+	private PopupMenuResendSites getPopupMenuResendSites () {
+		if (popupMenuResendSites == null) {
+			popupMenuResendSites = new PopupMenuResendSites();
+			popupMenuResendSites.setExtension(this);
+		}
+		return popupMenuResendSites;
+	}
+    
+    public void showNotesAddDialog(HistoryReference ref, String note) {
+    	dialogNotesAdd = new NotesAddDialog(getView().getMainFrame(), false);
+    	dialogNotesAdd.setPlugin(this);
+    	dialogNotesAdd.setVisible(true);
+    	dialogNotesAdd.getTxtDisplay().setText(note);
+    	dialogNotesAdd.setHistoryRef(ref);
+    }
+
+	public void hideNotesAddDialog() {
+		dialogNotesAdd.dispose();
+	}
+	
+    public void showAlertAddDialog(HistoryReference ref) {
+    	dialogAlertAdd = new AlertAddDialog(getView().getMainFrame(), false);
+    	dialogAlertAdd.setPlugin(this);
+    	dialogAlertAdd.setVisible(true);
+    	// TODO
+    	dialogAlertAdd.setHistoryRef(ref);
+    }
+
+    public void showAlertAddDialog(Alert alert) {
+    	dialogAlertAdd = new AlertAddDialog(getView().getMainFrame(), false);
+    	dialogAlertAdd.setPlugin(this);
+    	dialogAlertAdd.setVisible(true);
+    	dialogAlertAdd.setAlert(alert);
+    }
+
+	public void hideAlertAddDialog() {
+		dialogAlertAdd.dispose();
+	}
+	
+    public void showManageTagsDialog(HistoryReference ref, Vector<String> tags) {
+    	manageTags = new ManageTagsDialog(getView().getMainFrame(), false);
+    	manageTags.setPlugin(this);
+    	manageTags.setVisible(true);
+    	try {
+			manageTags.setAllTags(getModel().getDb().getTableTag().getAllTags());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	manageTags.setTags(tags);
+    	manageTags.setHistoryRef(ref);
+    }
+
+	public void hideManageTagsDialog() {
+		manageTags.dispose();
+	}
+	
+	private PopupMenuExportURLs getPopupMenuExportURLs() {
+		if (popupMenuExportURLs == null) {
+			popupMenuExportURLs = new PopupMenuExportURLs();
+			popupMenuExportURLs.setExtension(this);
+		}
+		return popupMenuExportURLs;
+	}
+	
 
 	private static Pattern patternWindows = Pattern.compile("window", Pattern.CASE_INSENSITIVE);
 

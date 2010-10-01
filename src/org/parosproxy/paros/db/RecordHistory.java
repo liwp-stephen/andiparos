@@ -41,20 +41,28 @@ public class RecordHistory {
 		httpMessage = new HttpMessage();
 
 	}
-
-
+		
+	// ZAP: Added note to RecordHistory constructor
+	// Andiparos: Flag support
 	public RecordHistory(int historyId, int historyType, long sessionId,
 			long timeSentMillis, int timeElapsedMillis, String reqHeader,
 			String reqBody, String resHeader, String resBody, String tag,
-			boolean flag) throws HttpMalformedHeaderException {
+			boolean flag, String note) throws HttpMalformedHeaderException {
+		
 		setHistoryId(historyId);
 		setHistoryType(historyType);
 		setSessionId(sessionId);
 		httpMessage = new HttpMessage(reqHeader, reqBody, resHeader, resBody);
 		httpMessage.setTimeSentMillis(timeSentMillis);
 		httpMessage.setTimeElapsedMillis(timeElapsedMillis);
-		httpMessage.setTag(tag);
+		// ZAP: Support for multiple tags
+        //httpMessage.setTag(tag);
+		if (tag != null && tag.length() > 0) {
+			// TODO decide how to handle these
+			//httpMessage.addTag(tag);
+		}
 		httpMessage.setFlag(flag);
+		httpMessage.setNote(note);
 	}
 
 	/**

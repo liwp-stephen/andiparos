@@ -34,12 +34,6 @@ import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpUtil;
 import org.parosproxy.paros.view.View;
 
-
-/**
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class ProxyServer implements Runnable {
 	
 	protected Thread	thread = null;
@@ -125,6 +119,7 @@ public class ProxyServer implements Runnable {
    	            if (!isDynamicPort) {
    	            	// ZAP: Warn the user if we cant listen on the static port
    	            	View.getSingleton().showWarningDialog("Cannot listen on port " + port);
+   	            	
    	                e.printStackTrace();
    	                return -1;
    	            } else {
@@ -195,9 +190,7 @@ public class ProxyServer implements Runnable {
 	}
 
 	protected ServerSocket createServerSocket(String ip, int port) throws UnknownHostException, IOException {
-//		ServerSocket socket = new ServerSocket(port, 300, InetAddress.getByName(ip)getProxyParam().getProxyIp()));
 		ServerSocket socket = new ServerSocket(port, 400, InetAddress.getByName(ip));
-
 		return socket;
 	}
 	

@@ -38,7 +38,7 @@ public class TestClientBrowserAutocomplete extends AbstractAppPlugin {
 	public final static Pattern patternAutocomplete = Pattern.compile(
 		"AUTOCOMPLETE\\s*=[^>]*OFF[^>]*", PATTERN_PARAM);
 	public final static Pattern patternForm = Pattern.compile(
-		"(<FORM\\s*[^>]+\\s*>)(.*?)</FORM>", PATTERN_PARAM | Pattern.DOTALL);
+		"(<FORM\b[^>]*>(.*?)</FORM>", PATTERN_PARAM| Pattern.DOTALL);
 	public final static Pattern patternInput = Pattern.compile(
 		"(<INPUT\\s*[^>]+type=[\"']?PASSWORD[\"']?[^>]+\\s*>)", PATTERN_PARAM | Pattern.DOTALL);
 

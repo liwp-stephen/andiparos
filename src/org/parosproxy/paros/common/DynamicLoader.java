@@ -35,6 +35,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.apache.log4j.Logger;
+
 /**
  * 
  * To change the template for this generated type comment go to Window -
@@ -45,7 +47,7 @@ public class DynamicLoader extends URLClassLoader {
 	private String directory = "";
 	private Vector<String> listClassName = new Vector<String>();
 
-	// private String packageName = "";
+	private Logger logger = Logger.getLogger(DynamicLoader.class);
 
 	public DynamicLoader(String directory, String packageName) {
 		super(new URL[0]);
@@ -94,21 +96,21 @@ public class DynamicLoader extends URLClassLoader {
 			jarFile = local.toString().substring("jar:".length());
 			int pos = jarFile.indexOf("!");
 			jarFile = jarFile.substring(0, pos);
-			System.out.println(jarFile);
+			
 			try {
 				parseJarFile(new File(new URI(jarFile)));
 			} catch (URISyntaxException e) {
-				e.printStackTrace();
+				// Andiparos: Log exception
+				logger.error(e.getMessage(), e);
 			}
 		} else {
 			try {
 				parseClassDir(new File(new URI(local.toString())), packageName);
 			} catch (URISyntaxException e) {
-				e.printStackTrace();
+				// Andiparos: Log exception
+				logger.error(e.getMessage(), e);
 			}
 		}
-		// jar:file:/C:/eclipse/workspace/parosng_make/paros/paros.jar!/com/proofsecure/paros/
-		// file:/C:/eclipse/workspace/parosng/output/com/proofsecure/paros/
 	}
 
 	@SuppressWarnings("unchecked")
@@ -178,18 +180,24 @@ public class DynamicLoader extends URLClassLoader {
 				listClassName.add(className);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			// Andiparos: Log exception
+			logger.error(e.getMessage(), e);
 		} finally {
 			if (jarFile != null) {
 				try {
 					jarFile.close();
-				} catch (IOException e1) {
+				} catch (IOException e) {
+					// Andiparos: Log exception
+					logger.error(e.getMessage(), e);
 				}
 			}
 		}
+		
 		try {
 			this.addURL(file.toURI().toURL());
-		} catch (MalformedURLException e1) {
+		} catch (MalformedURLException e) {
+			// Andiparos: Log exception
+			logger.error(e.getMessage(), e);
 		}
 	}
 

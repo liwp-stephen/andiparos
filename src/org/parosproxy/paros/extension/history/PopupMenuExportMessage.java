@@ -31,6 +31,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.extension.ExtensionPopupMenu;
 import org.parosproxy.paros.model.HistoryReference;
 
@@ -46,6 +48,9 @@ public class PopupMenuExportMessage extends ExtensionPopupMenu {
 	private static final String CRLF = "\r\n";
 	private ExtensionHistory extension = null;
 
+	 // ZAP: Added logger
+    private static Log log = LogFactory.getLog(PopupMenuExportMessage.class);
+    
 	/**
      * 
      */
@@ -108,13 +113,15 @@ public class PopupMenuExportMessage extends ExtensionPopupMenu {
 					}
 
 				} catch (Exception e1) {
-					extension.getView().showWarningDialog(
-							"Error saving file to " + file.getAbsolutePath()
-									+ ".");
+					extension.getView().showWarningDialog("Error saving file to " + file.getAbsolutePath() + ".");
+					// ZAP: Log exceptions
+                	log.warn(e1.getMessage(), e1);
 				} finally {
 					try {
 						fw.close();
 					} catch (Exception e2) {
+						// ZAP: Log exceptions
+	                	log.warn(e2.getMessage(), e2);
 					}
 				}
 			}
@@ -133,6 +140,8 @@ public class PopupMenuExportMessage extends ExtensionPopupMenu {
 					this.setEnabled(false);
 				}
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+            	log.warn(e.getMessage(), e);
 			}
 			return true;
 
@@ -174,6 +183,8 @@ public class PopupMenuExportMessage extends ExtensionPopupMenu {
 			}
 
 		} catch (Exception e) {
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 
 	}

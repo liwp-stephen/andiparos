@@ -135,6 +135,7 @@ public class TrapParam extends AbstractParam {
                 }
             } catch (Exception e) {}
         }
+        System.out.println(" : " + result);
         return result;
     }
     

@@ -26,11 +26,7 @@ import java.util.Vector;
 
 import org.parosproxy.paros.core.spider.SpiderListener;
 
-/**
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public class Database {
 
 	private static Database database = null;
@@ -40,6 +36,8 @@ public class Database {
 	private TableSession tableSession = null;
 	private TableAlert tableAlert = null;
 	private TableScan tableScan = null;
+	// ZAP: Added TableTag
+	private TableTag tableTag = null;
 
 	private Vector<DatabaseListener> listenerList = new Vector<DatabaseListener>();
 
@@ -48,11 +46,12 @@ public class Database {
 		tableSession = new TableSession();
 		tableAlert = new TableAlert();
 		tableScan = new TableScan();
+		tableTag = new TableTag();
 		addDatabaseListener(tableHistory);
 		addDatabaseListener(tableSession);
 		addDatabaseListener(tableAlert);
 		addDatabaseListener(tableScan);
-
+		addDatabaseListener(tableTag);
 	}
 
 	/**
@@ -155,5 +154,20 @@ public class Database {
 	 */
 	public void setTableScan(TableScan tableScan) {
 		this.tableScan = tableScan;
+	}
+	
+	/**
+	 * @return Returns the tableTag.
+	 */
+	public TableTag getTableTag() {
+		return tableTag;
+	}
+
+	/**
+	 * @param tableTag
+	 *            The tableTag to set.
+	 */
+	public void setTableTag(TableTag tableTag) {
+		this.tableTag = tableTag;
 	}
 }

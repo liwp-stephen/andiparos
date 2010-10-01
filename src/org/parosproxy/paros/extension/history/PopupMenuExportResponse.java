@@ -29,6 +29,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.extension.ExtensionPopupMenu;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
@@ -43,6 +45,9 @@ public class PopupMenuExportResponse extends ExtensionPopupMenu {
 	private static final long serialVersionUID = -1127184069859891894L;
 	
 	private ExtensionHistory extension = null;
+	
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(PopupMenuExportResponse.class);
 
 	/**
      * 
@@ -92,15 +97,12 @@ public class PopupMenuExportResponse extends ExtensionPopupMenu {
 				try {
 					msg = ref.getHttpMessage();
 				} catch (Exception e1) {
-					extension.getView().showWarningDialog(
-							"Error reading response.");
+					extension.getView().showWarningDialog("Error reading response.");
 					return;
 				}
 
-				if (msg.getResponseHeader().isEmpty()
-						|| msg.getResponseBody().length() == 0) {
-					extension.getView().showWarningDialog(
-							"Empty body.  File not created.");
+				if (msg.getResponseHeader().isEmpty() || msg.getResponseBody().length() == 0) {
+					extension.getView().showWarningDialog("Empty body.  File not created.");
 					return;
 				}
 
@@ -129,13 +131,15 @@ public class PopupMenuExportResponse extends ExtensionPopupMenu {
 					}
 
 				} catch (Exception e1) {
-					extension.getView().showWarningDialog(
-							"Error saving file to " + file.getAbsolutePath()
-									+ ".");
+					extension.getView().showWarningDialog("Error saving file to " + file.getAbsolutePath() + ".");
+					// ZAP: Log exceptions
+                	log.warn(e1.getMessage(), e1);
 				} finally {
 					try {
 						bos.close();
 					} catch (Exception e2) {
+						// ZAP: Log exceptions
+	                	log.warn(e2.getMessage(), e2);
 					}
 				}
 			}
@@ -154,6 +158,8 @@ public class PopupMenuExportResponse extends ExtensionPopupMenu {
 					this.setEnabled(false);
 				}
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+            	log.warn(e.getMessage(), e);
 			}
 			return true;
 
@@ -174,6 +180,8 @@ public class PopupMenuExportResponse extends ExtensionPopupMenu {
 			}
 
 		} catch (Exception e) {
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 
 	}

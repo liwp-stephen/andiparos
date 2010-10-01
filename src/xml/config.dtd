@@ -19,7 +19,8 @@
 <!ELEMENT postform ( #PCDATA ) >
 <!ELEMENT processImages ( #PCDATA ) >
 <!ELEMENT proxy ( ip, port, reverseProxy ) >
-<!ELEMENT proxyChain ( hostName, port, skipName, realm, userName, password ) >
+<!ELEMENT proxyChain ( hostName, port, skipName, realm, userName, password, prompt ) >
+<!ELEMENT prompt ( #PCDATA )>
 <!ELEMENT realm EMPTY >
 <!ELEMENT reverseProxy ( use, ip, httpPort, httpsPort ) >
 <!ELEMENT scanner ( hostPerScan, threadPerHost ) >

@@ -26,6 +26,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -39,6 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.view.SiteMapListener;
 
 /**
  * 
@@ -57,6 +60,10 @@ public class SiteMapPanel extends JPanel {
 	private TreePath rootTreePath = null;
 	private View view = null;
 
+	// ZAP: Added SiteMapListenners
+	private List<SiteMapListener> listenners = new ArrayList<SiteMapListener>();
+	
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -113,8 +120,27 @@ public class SiteMapPanel extends JPanel {
 			treeSite.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent e) {
 					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
-						// right mouse button
-						View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
+						// ZAP: Select site list item on right click
+				    	TreePath tp = treeSite.getPathForLocation( e.getPoint().x, e.getPoint().y );
+				    	if ( tp != null ) {
+				    		boolean select = true;
+				    		// Only select a new item if the current item is not
+				    		// already selected - this is to allow multiple items
+				    		// to be selected
+					    	if (treeSite.getSelectionPaths() != null) {
+					    		for (TreePath t : treeSite.getSelectionPaths()) {
+					    			if (t.equals(tp)) {
+					    				select = false;
+					    				break;
+					    			}
+					    		}
+					    	}
+					    	if (select) {
+					    		treeSite.getSelectionModel().setSelectionPath(tp);
+					    	}
+				    	}
+
+	          			View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
 					}
 				}
 			});
@@ -123,19 +149,27 @@ public class SiteMapPanel extends JPanel {
 				public void valueChanged(TreeSelectionEvent e) {
 					HttpMessage msg = null;
 					SiteNode node = (SiteNode) treeSite.getLastSelectedPathComponent();
-					if (node == null)
+					if (node == null) {
 						return;
+					}
 					if (!node.isRoot()) {
 						try {
 							msg = node.getHistoryReference().getHttpMessage();
 						} catch (Exception e1) {
-							return;
+							// ZAP: Log exceptions
+                        	log.warn(e1.getMessage(), e1);
+                            return;
 						}
 
 						HttpPanel reqPanel = getView().getRequestPanel();
 						HttpPanel resPanel = getView().getResponsePanel();
 						reqPanel.setMessage(msg, true);
 						resPanel.setMessage(msg, false);
+						
+						// ZAP: Call SiteMapListenners
+			            for (SiteMapListener listener : listenners) {
+			            	listener.nodeSelected(node);
+			            }
 					}
 				}
 			});
@@ -162,5 +196,10 @@ public class SiteMapPanel extends JPanel {
 		} catch (Exception e) {
         	log.warn(e.getMessage(), e);
 		}
+	}
+	
+	// ZAP: Added addSiteMapListenners
+	public void addSiteMapListenner (SiteMapListener listenner) {
+		this.listenners.add(listenner);
 	}
 }

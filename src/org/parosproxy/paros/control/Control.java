@@ -41,13 +41,13 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 
 import org.parosproxy.paros.extension.beanshell.ExtensionBeanShell;
+import org.zaproxy.zap.extension.compare.ExtensionCompare;
+import org.zaproxy.zap.extension.encoder2.ExtensionEncoder2;
+import org.zaproxy.zap.extension.portscan.ExtensionPortScan;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 
-/**
- * 
- * Overall control with interaction on model and view. Window - Preferences -
- * Java - Code Generation - Code and Comments
- */
+
 public class Control extends AbstractControl {
 
 	private static Log log = LogFactory.getLog(Control.class);
@@ -73,6 +73,9 @@ public class Control extends AbstractControl {
 			// no need to start proxy if no view
 			getProxy();
 			getExtensionLoader().hookProxyListener(getProxy());
+			
+			// ZAP: Add site map listeners
+		    getExtensionLoader().hookSiteMapListener(view.getSiteTreePanel());
 
 			// post-init
 			getProxy().startServer();
@@ -94,14 +97,24 @@ public class Control extends AbstractControl {
 		getExtensionLoader().addExtension(new ExtensionEdit());
 
 		getExtensionLoader().addExtension(new ExtensionFilter());
-		getExtensionLoader().addExtension(new ExtensionPatternSearch());
 		getExtensionLoader().addExtension(new ExtensionState());
-
+		
+		
+		// ZAP: Moved report extension above history so Generate Report is above the Exports 
+        getExtensionLoader().addExtension(new ExtensionReport());
+		
 		getExtensionLoader().addExtension(new ExtensionTrap());
 		getExtensionLoader().addExtension(new ExtensionHistory());
+		
 		// ZAP: new extension - search 
+		//getExtensionLoader().addExtension(new ExtensionPatternSearch());
         getExtensionLoader().addExtension(new ExtensionSearch());
-		getExtensionLoader().addExtension(new ExtensionEncoder());
+		
+		
+		// ZAP: replaced encoder with encoder2
+        //getExtensionLoader().addExtension(new ExtensionEncoder());
+        getExtensionLoader().addExtension(new ExtensionEncoder2());
+        
 		getExtensionLoader().addExtension(new ExtensionSpider());
 		getExtensionLoader().addExtension(new ExtensionScanner());
 		getExtensionLoader().addExtension(new ExtensionReport());
@@ -109,6 +122,10 @@ public class Control extends AbstractControl {
 		getExtensionLoader().addExtension(new ExtensionBeanShell());
 		getExtensionLoader().addExtension(new ExtensionUpdate());
 
+		// ZAP: new extensions - passive scanner
+        getExtensionLoader().addExtension(new ExtensionPassiveScan());
+        getExtensionLoader().addExtension(new ExtensionPortScan());
+        getExtensionLoader().addExtension(new ExtensionCompare());
 	}
 
 	public MenuFileControl getMenuFileControl() {

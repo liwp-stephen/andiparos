@@ -49,7 +49,7 @@ public class OptionsDialog extends AbstractParamDialog {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(600, 470);
+		this.setSize(600, 570);
 	}
 
 }

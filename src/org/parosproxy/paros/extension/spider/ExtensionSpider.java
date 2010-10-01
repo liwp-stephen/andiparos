@@ -21,6 +21,8 @@
 package org.parosproxy.paros.extension.spider;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -29,6 +31,8 @@ import javax.swing.JTree;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.core.spider.Spider;
 import org.parosproxy.paros.core.spider.SpiderListener;
 import org.parosproxy.paros.core.spider.SpiderParam;
@@ -48,8 +52,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class ExtensionSpider extends ExtensionAdaptor implements
-		SpiderListener, SessionChangedListener, CommandLineListener {
+public class ExtensionSpider extends ExtensionAdaptor implements SpiderListener, SessionChangedListener, CommandLineListener {
 
 	private static final int ARG_SPIDER_IDX = 0;
 	private static final int ARG_URL_IDX = 1;
@@ -64,6 +67,9 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 	private OptionsSpiderPanel optionsSpiderPanel = null;
 	private SpiderParam spiderParam = null;
 	private CommandLineArgument[] arguments = new CommandLineArgument[2];
+	
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(ExtensionSpider.class);
 
 	/**
      * 
@@ -99,19 +105,14 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 		if (menuItemSpider == null) {
 			menuItemSpider = new JMenuItem();
 			menuItemSpider.setText("Spider...");
-			menuItemSpider
-					.addActionListener(new java.awt.event.ActionListener() {
+			menuItemSpider.addActionListener(new ActionListener() {
 
-						public void actionPerformed(java.awt.event.ActionEvent e) {
-							JTree siteTree = getView().getSiteTreePanel()
-									.getTreeSite();
-							SiteNode node = (SiteNode) siteTree
-									.getLastSelectedPathComponent();
+						public void actionPerformed(ActionEvent e) {
+							JTree siteTree = getView().getSiteTreePanel().getTreeSite();
+							SiteNode node = (SiteNode) siteTree.getLastSelectedPathComponent();
 							HttpMessage msg = null;
 							if (node == null) {
-								getView()
-										.showWarningDialog(
-												"You need to visit the website via a browser first and select a URL/folder/node in the 'Sites' panel displayed.");
+								getView().showWarningDialog("You need to visit the website via a browser first and select a URL/folder/node in the 'Sites' panel displayed.");
 								return;
 							}
 							setStartNode(node);
@@ -119,13 +120,13 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 								showDialog("All sites will be crawled");
 							} else {
 								try {
-									msg = node.getHistoryReference()
-											.getHttpMessage();
+									msg = node.getHistoryReference().getHttpMessage();
 								} catch (Exception e1) {
+									// ZAP: Log exceptions
+		                        	log.warn(e1.getMessage(), e1);
 									return;
 								}
-								String tmp = msg.getRequestHeader().getURI()
-										.toString();
+								String tmp = msg.getRequestHeader().getURI().toString();
 								showDialog(tmp);
 							}
 
@@ -140,8 +141,9 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 		super.hook(extensionHook);
 		if (getView() != null) {
 			extensionHook.getHookMenu().addAnalyseMenuItem(getMenuItemSpider());
-			extensionHook.getHookMenu().addAnalyseMenuItem(
-					extensionHook.getHookMenu().getMenuSeparator());
+			
+			extensionHook.getHookMenu().addAnalyseMenuItem(extensionHook.getHookMenu().getMenuSeparator());
+			
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpider());
 			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
@@ -173,11 +175,11 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 						HistoryReference.TYPE_SPIDER_VISITED);
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				// ZAP: Log exceptions
+            	log.warn(e.getMessage(), e);
 			}
 
-			spider = new Spider(getSpiderParam(), getModel().getOptionsParam()
-					.getConnectionParam(), getModel());
+			spider = new Spider(getSpiderParam(), getModel().getOptionsParam().getConnectionParam(), getModel());
 			spider.addSpiderListener(this);
 
 			inOrderSeed(spider, startNode);
@@ -190,7 +192,8 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 			spider.start();
 
 		} catch (NullPointerException e1) {
-			e1.printStackTrace();
+			// ZAP: Log exceptions
+        	log.warn(e1.getMessage(), e1);
 		}
 	}
 
@@ -206,7 +209,8 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 
 		if (!node.isLeaf()) {
@@ -214,6 +218,8 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 				try {
 					inOrderSeed(spider, (SiteNode) node.getChildAt(i));
 				} catch (Exception e) {
+					// ZAP: Log exceptions
+		        	log.warn(e.getMessage(), e);
 				}
 			}
 		}
@@ -230,7 +236,8 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 					HistoryReference.TYPE_SPIDER_VISITED);
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 
 		if (getView() != null) {
@@ -256,6 +263,8 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 					}
 				});
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+	        	log.warn(e.getMessage(), e);
 			}
 		}
 	}
@@ -280,6 +289,8 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 			historyRef = new HistoryReference(getModel().getSession(),
 					HistoryReference.TYPE_SPIDER, msg);
 		} catch (Exception e) {
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 		siteTree.addPath(historyRef, msg);
 	}
@@ -326,6 +337,8 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 					}
 				});
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+	        	log.warn(e.getMessage(), e);
 			}
 		}
 	}
@@ -448,7 +461,8 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 					System.out.println("Adding seed " + uri);
 					spider.addSeed(new URI(uri, true));
 				} catch (URIException e) {
-					e.printStackTrace();
+					// ZAP: Log exceptions
+		        	log.warn(e.getMessage(), e);
 				}
 			}
 		}
@@ -462,6 +476,8 @@ public class ExtensionSpider extends ExtensionAdaptor implements
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
+				// ZAP: Log exceptions
+	        	log.warn(e.getMessage(), e);
 			}
 		}
 		System.out.println("Spider completed.");

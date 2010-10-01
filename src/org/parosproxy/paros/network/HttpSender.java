@@ -37,7 +37,6 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.Model;
 
 public class HttpSender {
 
@@ -126,9 +125,10 @@ public class HttpSender {
 			// param.getProxyChainName(), param.getProxyChainName());
 			NTCredentials credentials = new NTCredentials(
 					param.getProxyChainUserName(),
-					param.getProxyChainPassword(), "", param
-							.getProxyChainRealm().equals("") ? ""
-							: param.getProxyChainRealm());
+					param.getProxyChainPassword(), "",
+					param.getProxyChainRealm().equals("")
+						? "" : param.getProxyChainRealm());
+
 			// Below is the original code, but user reported that above code
 			// works.
 			// UsernamePasswordCredentials credentials = new
@@ -136,7 +136,8 @@ public class HttpSender {
 			// param.getProxyChainUserName(), param.getProxyChainPassword());
 			AuthScope authScope = new AuthScope(param.getProxyChainName(),
 					param.getProxyChainPort(),
-					param.getProxyChainRealm().equals("") ? AuthScope.ANY_REALM : param.getProxyChainRealm());
+					param.getProxyChainRealm().equals("")
+						? AuthScope.ANY_REALM : param.getProxyChainRealm());
 
 			clientProxy.getState().setProxyCredentials(authScope, credentials);
 		}

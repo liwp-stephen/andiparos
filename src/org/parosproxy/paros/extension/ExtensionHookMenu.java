@@ -43,6 +43,10 @@ public class ExtensionHookMenu {
 	private Vector<JMenuItem> analyseMenuItemList = new Vector<JMenuItem>();
 	private Vector<JMenuItem> toolsMenuItemList = new Vector<JMenuItem>();
 	private Vector<JMenuItem> popupMenuList = new Vector<JMenuItem>();
+	
+	// ZAP: Added help and reports menu extension hook
+    private Vector<JMenuItem> helpMenuList = new Vector<JMenuItem>();
+    private Vector<JMenuItem> reportMenuList = new Vector<JMenuItem>();
 
 	List<JMenuItem> getNewMenus() {
 		return newMenuList;
@@ -76,6 +80,14 @@ public class ExtensionHookMenu {
 	List<JMenuItem> getPopupMenus() {
 		return popupMenuList;
 	}
+	
+	List<JMenuItem> getHelpMenus() {
+        return helpMenuList;
+    }
+
+    List<JMenuItem> getReportMenus() {
+        return reportMenuList;
+    }
 
 	public void addFileMenuItem(JMenuItem menuItem) {
 		getFile().add(menuItem);
@@ -110,6 +122,14 @@ public class ExtensionHookMenu {
 	public void addPopupMenuItem(ExtensionPopupMenu menuItem) {
 		getPopupMenus().add(menuItem);
 	}
+	
+	public void addHelpMenuItem(JMenuItem menuItem) {
+        getHelpMenus().add(menuItem);        
+    }
+    
+    public void addReportMenuItem(JMenuItem menuItem) {
+        getReportMenus().add(menuItem);        
+    }
 
 	public JMenuItem getMenuSeparator() {
 		return MENU_SEPARATOR;

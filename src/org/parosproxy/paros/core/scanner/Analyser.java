@@ -398,7 +398,8 @@ public class Analyser {
 					.replaceAll(getPathRegex(uri), "")
 					.replaceAll("\\s[012]\\d:[0-5]\\d:[0-5]\\d\\s", "");
 					
-				if (sample.getMessage().getResponseBody().equals(body)) {
+				// ZAP: FindBugs fix - added call to HttpBody.toString() 
+				if (sample.getMessage().getResponseBody().toString().equals(body)) {
 					return false;
 				}
 				return true;

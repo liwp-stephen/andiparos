@@ -21,14 +21,9 @@
 
 package org.parosproxy.paros.db;
 
-/**
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class RecordAlert {
 
-	private int alertId = 0;
+	private int alertId = -1;
 	private int scanId = 0;
 	private int pluginId = 0;
 	private String alert = "";
@@ -41,15 +36,17 @@ public class RecordAlert {
 	private String solution = "";
 	private String reference = "";
 	private int historyId = 0;
+	// ZAP: Added sourceHistoryId to RecordAlert - this is the original record that 'caused' the alert
+    private int sourceHistoryId = 0;
 
 	public RecordAlert() {
 
 	}
 
-	public RecordAlert(int alertId, int scanId, int pluginId, String alert,
-			int risk, int reliability, String description, String uri,
-			String query, String otherInfo, String solution, String reference,
-			int historyId) {
+	public RecordAlert(int alertId, int scanId, int pluginId, String alert, 
+			int risk, int reliability, String description, String uri, String query, 
+			String otherInfo, String solution, String reference, int historyId,
+			int sourceHistoryId) {
 		setAlertId(alertId);
 		setScanId(scanId);
 		setPluginId(pluginId);
@@ -63,6 +60,7 @@ public class RecordAlert {
 		setSolution(solution);
 		setReference(reference);
 		setHistoryId(historyId);
+		setSourceHistoryId(sourceHistoryId);
 
 	}
 
@@ -260,4 +258,18 @@ public class RecordAlert {
 	public void setHistoryId(int historyId) {
 		this.historyId = historyId;
 	}
+	
+	/**
+     * @return Returns the sourceHistoryId.
+     */
+    public int getSourceHistoryId() {
+        return sourceHistoryId;
+    }
+    
+    /**
+     * @param sourceHistoryId The sourceHistoryId to set.
+     */
+    public void setSourceHistoryId(int sourceHistoryId) {
+        this.sourceHistoryId = sourceHistoryId;
+    }
 }

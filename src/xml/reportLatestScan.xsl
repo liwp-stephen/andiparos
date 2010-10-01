@@ -9,12 +9,12 @@
   <xsl:template match="/report">
 <html>
 <head>
-<title>Andiparos Injection Proxy - Scanning Report</title>
+<title>Andiparos Scanning Report</title>
 
 </head>
 
 <body text="#000000">
-<p><strong>Andiparos Injection Proxy - Scanning Report</strong></p>
+<p><strong>Andiparos Scanning Report</strong></p>
 
 <p>
 <xsl:apply-templates select="text()"/>

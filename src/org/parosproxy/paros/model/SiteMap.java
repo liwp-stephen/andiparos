@@ -30,6 +30,8 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -40,6 +42,10 @@ public class SiteMap extends DefaultTreeModel {
 	private static final long serialVersionUID = -546533808259599779L;
 
 	private Model model = null;
+	
+	// ZAP: Added log
+    private static Log log = LogFactory.getLog(SiteMap.class);
+    
 
 	public static SiteMap createTree(Model model) {
 		SiteNode root = new SiteNode("Sites");
@@ -107,7 +113,8 @@ public class SiteMap extends DefaultTreeModel {
 
 			}
 		} catch (URIException e) {
-			e.printStackTrace();
+			// ZAP: Added error
+            log.error(e.getMessage(), e);
 		}
 
 		if (resultNode == null) {
@@ -118,6 +125,8 @@ public class SiteMap extends DefaultTreeModel {
 		try {
 			nodeMsg = resultNode.getHistoryReference().getHttpMessage();
 		} catch (Exception e) {
+			// ZAP: Added error
+            log.error(e.getMessage(), e);
 		}
 		return nodeMsg;
 	}
@@ -134,7 +143,8 @@ public class SiteMap extends DefaultTreeModel {
 		try {
 			msg = ref.getHttpMessage();
 		} catch (Exception e) {
-			e.printStackTrace();
+			// ZAP: Added error
+            log.error(e.getMessage(), e);
 			return;
 		}
 
@@ -202,15 +212,25 @@ public class SiteMap extends DefaultTreeModel {
 		}
 
 	}
+	
+	private String cleanName(String name) {
+    	int i = name.lastIndexOf(" (");
+    	if (i > 0) {
+    		return name.substring(0, i);
+    	}
+    	return name;
+    }
 
 	private SiteNode findAndAddChild(SiteNode parent, String nodeName, HistoryReference baseRef, HttpMessage baseMsg)
 	throws URIException, HttpMalformedHeaderException, NullPointerException, SQLException {
+		// ZAP: Added debug
+    	log.debug("findAndAddChild " + parent.toString() + " / " + nodeName);
 		SiteNode result = findChild(parent, nodeName);
 		if (result == null) {
 			SiteNode newNode = new SiteNode(nodeName);
 			int pos = parent.getChildCount();
 			for (int i = 0; i < parent.getChildCount(); i++) {
-				if (nodeName.compareTo(parent.getChildAt(i).toString()) < 0) {
+				if (nodeName.compareTo(cleanName(parent.getChildAt(i).toString())) < 0) {
 					pos = i;
 					break;
 				}
@@ -219,21 +239,28 @@ public class SiteMap extends DefaultTreeModel {
 			result = newNode;
 			result.setHistoryReference(createReference(result, baseRef, baseMsg));
 		}
+		// ZAP: Cope with getSiteNode() returning null
+        if (baseRef.getSiteNode() == null) {
+        	baseRef.setSiteNode(result);
+        }
 		return result;
 	}
 
 	private SiteNode findChild(SiteNode parent, String nodeName) {
+		// ZAP: Added debug
+    	log.debug("findChild " + parent.toString() + " / " + nodeName);
 		for (int i = 0; i < parent.getChildCount(); i++) {
 			SiteNode child = (SiteNode) parent.getChildAt(i);
-			if (child.toString().equals(nodeName)) {
+			if (cleanName(child.toString()).equals(nodeName)) {
 				return child;
 			}
 		}
 		return null;
 	}
 
-	private SiteNode findAndAddLeaf(SiteNode parent, String nodeName,
-			HistoryReference ref, HttpMessage msg) {
+	private SiteNode findAndAddLeaf(SiteNode parent, String nodeName, HistoryReference ref, HttpMessage msg) {
+		// ZAP: Added debug
+    	log.debug("findAndAddLeaf " + parent.toString() + " / " + nodeName); 
 
 		String leafName = getLeafName(nodeName, msg);
 		SiteNode node = findChild(parent, leafName);
@@ -242,11 +269,15 @@ public class SiteMap extends DefaultTreeModel {
 			node.setHistoryReference(ref);
 			int pos = parent.getChildCount();
 			for (int i = 0; i < parent.getChildCount(); i++) {
-				if (leafName.compareTo(parent.getChildAt(i).toString()) < 0) {
+				if (leafName.compareTo(cleanName(parent.getChildAt(i).toString())) < 0) {
 					pos = i;
 					break;
 				}
 			}
+			// ZAP: cope with getSiteNode() returning null
+            if (ref.getSiteNode() == null) {
+            	ref.setSiteNode(node);
+            }
 
 			insertNodeInto(node, parent, pos);
 		} else {
@@ -274,7 +305,8 @@ public class SiteMap extends DefaultTreeModel {
 		try {
 			query = msg.getRequestHeader().getURI().getQuery();
 		} catch (URIException e) {
-			e.printStackTrace();
+			// ZAP: Added error
+            log.error(e.getMessage(), e);
 		}
 		if (query == null) {
 			query = "";

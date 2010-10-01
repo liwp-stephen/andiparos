@@ -74,6 +74,8 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 	private RecordScan recordScan = null;
 
 	private ManualRequestEditorDialog manualRequestEditorDialog = null;
+	// ZAP: Added popup menu alert edit
+	private PopupMenuAlertEdit popupMenuAlertEdit = null;
 	private PopupMenuResend popupMenuResend = null;
 	private PopupMenuScan popupMenuScan = null;
 	private OptionsScannerPanel optionsScannerPanel = null;
@@ -143,6 +145,9 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 			
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuResend());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuScanHistory());
+			
+			// ZAP: Added popup menu alert edit
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAlertEdit());
 
 			extensionHook.getHookView().addStatusPanel(getAlertPanel());
 			extensionHook.getHookView().addOptionPanel(getOptionsScannerPanel());
@@ -181,7 +186,8 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 		try {
 			recordScan = getModel().getDb().getTableScan().insert(getModel().getSession().getSessionId(), getModel().getSession().getSessionName());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// ZAP: Print stack trace to Output tab
+        	getView().getOutputPanel().append(e);
 		}
 		startTime = System.currentTimeMillis();
 		scanner.start(startNode);
@@ -215,7 +221,8 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 			if (EventQueue.isDispatchThread()) {
 				progressDialog.dispose();
 				progressDialog = null;
-				getView().showMessageDialog("Scanning completed in " + scanTime / 1000 + "s.  The result can be obtained from Report>Last Scan Result.");
+				// ZAP: changed message
+                getView().showMessageDialog("Scanning completed in " + scanTime/1000 + "s.");
 				return;
 			}
 			try {
@@ -223,10 +230,13 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 					public void run() {
 						progressDialog.dispose();
 						progressDialog = null;
-						getView().showMessageDialog("Scanning completed in " + scanTime / 1000 + "s.  The result can be obtained from Report>Last Scan Result.");
+						// ZAP: changed message
+		                getView().showMessageDialog("Scanning completed in " + scanTime/1000 + "s.");
 					}
 				});
 			} catch (Exception e) {
+				// ZAP: Print stack trace to Output tab
+            	getView().getOutputPanel().append(e);
 			}
 		}
 
@@ -309,6 +319,8 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 			writeAlertToDB(alert);
 			addAlertToDisplay(alert);
 		} catch (Exception e) {
+			// ZAP: Print stack trace to Output tab
+        	getView().getOutputPanel().append(e);
 		}
 	}
 
@@ -387,7 +399,8 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 		return alertPanel;
 	}
 
-	private DefaultTreeModel getTreeModel() {
+	// ZAP: Changed return type for getTreeModel
+	private AlertTreeModel getTreeModel() {
 		if (treeAlert == null) {
 			treeAlert = new AlertTreeModel();
 		}
@@ -398,12 +411,45 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 
 		TableAlert tableAlert = getModel().getDb().getTableAlert();
 		HistoryReference ref = new HistoryReference(getModel().getSession(), HistoryReference.TYPE_SCANNER, alert.getMessage());
-		RecordAlert recordAlert = tableAlert.write(recordScan.getScanId(), alert.getPluginId(), alert.getAlert(), alert.getRisk(), alert.getReliability(), alert.getDescription(),
-				alert.getUri(), alert.getParam(), alert.getOtherInfo(), alert.getSolution(), alert.getReference(), ref.getHistoryId());
+		
+		// ZAP: cope with recordScan being null
+        int scanId = 0;
+        if (recordScan != null) {
+        	scanId = recordScan.getScanId();
+        }
+				
+		RecordAlert recordAlert = tableAlert.write(scanId, alert.getPluginId(),
+				alert.getAlert(), alert.getRisk(), alert.getReliability(),
+				alert.getDescription(), alert.getUri(), alert.getParam(),
+				alert.getOtherInfo(), alert.getSolution(),
+				alert.getReference(), ref.getHistoryId(),
+				alert.getSourceHistoryId());
 
 		alert.setAlertId(recordAlert.getAlertId());
 
 	}
+	
+
+    // ZAP: Added updateAlertInDB
+	public void updateAlertInDB(Alert alert) throws HttpMalformedHeaderException, SQLException {
+
+	    TableAlert tableAlert = getModel().getDb().getTableAlert();
+	    tableAlert.update(alert.getAlertId(), alert.getAlert(), alert.getRisk(), 
+	    		alert.getReliability(), alert.getDescription(), alert.getUri(),
+	    		alert.getParam(), alert.getOtherInfo(), alert.getSolution(), 
+	    		alert.getReference(), alert.getSourceHistoryId());
+	}
+	
+	// ZAP: Added displayAlert 
+	public void displayAlert (Alert alert) {
+		this.alertPanel.getAlertViewPanel().displayAlert(alert);
+	}
+	
+	// ZAP: Added updateAlertInTree
+	public void updateAlertInTree(Alert originalAlert, Alert alert) {
+		this.getTreeModel().updatePath(originalAlert, alert);
+	}
+
 
 	public void sessionChanged(Session session) {
 		AlertTreeModel tree = (AlertTreeModel) getAlertPanel().getTreeAlert().getModel();
@@ -414,11 +460,17 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 			tree.removeNodeFromParent((MutableTreeNode) root.getChildAt(0));
 		}
 
-		try {
-			refreshAlert(session);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		// ZAP: Reset the alert counts
+	    tree.resetAlertCounts();
+	    
+	    try {
+            refreshAlert(session);
+            // ZAP: this prevent the UI getting corruted
+            tree.nodeStructureChanged(root);
+        } catch (SQLException e) {
+        	// ZAP: Print stack trace to Output tab
+        	getView().getOutputPanel().append(e);
+        }
 	}
 
 	private void refreshAlert(Session session) throws SQLException {
@@ -462,6 +514,15 @@ public class ExtensionScanner extends ExtensionAdaptor implements ScannerListene
 		return popupMenuResend;
 	}
 
+	// ZAP: Added popup menu alert edit
+	private PopupMenuAlertEdit getPopupMenuAlertEdit() {
+		if (popupMenuAlertEdit == null) {
+			popupMenuAlertEdit = new PopupMenuAlertEdit();
+			popupMenuAlertEdit.setExtension(this);
+		}
+		return popupMenuAlertEdit;
+	}
+	
 	/**
 	 * This method initializes optionsScannerPanel
 	 * 

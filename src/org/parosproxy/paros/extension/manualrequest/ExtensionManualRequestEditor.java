@@ -25,6 +25,7 @@ import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.apache.commons.httpclient.URI;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
@@ -41,7 +42,9 @@ public class ExtensionManualRequestEditor extends ExtensionAdaptor {
 	private ManualRequestEditorDialog manualRequestEditorDialog = null;
 	private JMenuItem menuManualRequestEditor = null;
 	private HistoryList historyList = null;
-
+	// ZAP Added logger
+	private Logger logger = Logger.getLogger(ExtensionManualRequestEditor.class);
+	
 	public ExtensionManualRequestEditor() {
 		super();
 		initialize();
@@ -85,7 +88,8 @@ public class ExtensionManualRequestEditor extends ExtensionAdaptor {
 							msg.setRequestHeader(new HttpRequestHeader(HttpRequestHeader.GET, uri, HttpHeader.HTTP10));
 							dialog.getRequestPanel().setMessage(msg, true);
 						} catch (Exception e1) {
-							
+							// ZAP: Log the exception
+                        	logger.error(e1.getMessage(), e1);
 						}
 					}
 					dialog.setVisible(true);

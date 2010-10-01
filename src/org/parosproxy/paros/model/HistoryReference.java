@@ -22,9 +22,16 @@ package org.parosproxy.paros.model;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.RecordHistory;
+import org.parosproxy.paros.db.RecordTag;
+import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.db.TableHistory;
+import org.parosproxy.paros.db.TableTag;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -49,6 +56,13 @@ public class HistoryReference {
 
 	private static DecimalFormat decimalFormat = new java.text.DecimalFormat("##0.###");
 	private static TableHistory staticTableHistory = null;
+	
+	// ZAP: Support for multiple tags
+	private static TableTag staticTableTag = null;
+	// ZAP: Support for loading alerts from db
+	private static TableAlert staticTableAlert = null;
+	// ZAP: Support for linking Alerts to Hrefs
+	private List<Alert> alerts = new ArrayList<Alert>();
 
 	private int historyId = 0;
 	private int historyType = TYPE_MANUAL;
@@ -67,7 +81,18 @@ public class HistoryReference {
 		RecordHistory history = null;
 		history = staticTableHistory.read(historyId);
 		HttpMessage msg = history.getHttpMessage();
+		// ZAP: Support for multiple tags
+		List<RecordTag> tags = staticTableTag.getTagsForHistoryID(historyId);
+		for (RecordTag tr : tags) {
+			msg.addTag(tr.getTag());
+		}
 		build(history.getSessionId(), history.getHistoryId(), history.getHistoryType(), msg);
+		
+		// ZAP: Support for loading the alerts from the db
+		List<RecordAlert> alerts = staticTableAlert.getAlertsBySourceHistoryId(historyId);
+		for (RecordAlert alert: alerts) {
+			this.addAlert(new Alert(alert, this));
+		}
 	}
 
 	public HistoryReference(Session session, int historyType, HttpMessage msg)
@@ -76,6 +101,17 @@ public class HistoryReference {
 		RecordHistory history = null;
 		history = staticTableHistory.write(session.getSessionId(), historyType, msg);
 		build(session.getSessionId(), history.getHistoryId(), history.getHistoryType(), msg);
+		// ZAP: Init HttpMessage HistoryReference field
+		msg.setHistoryRef(this);
+		// ZAP: Support for multiple tags
+		for (String tag : msg.getTags()) {
+			this.addTag(tag);
+		}
+		// ZAP: Support for loading the alerts from the db
+		List<RecordAlert> alerts = staticTableAlert.getAlertsBySourceHistoryId(historyId);
+		for (RecordAlert alert: alerts) {
+			this.addAlert(new Alert(alert, this));
+		}
 	}
 
 	private void build(long sessionId, int historyId, int historyType, HttpMessage msg) {
@@ -85,12 +121,22 @@ public class HistoryReference {
 		if (historyType == TYPE_MANUAL) {
 			this.display = getDisplay(msg);
 		}
+		// ZAP: Init HttpMessage HistoryReference field
+		msg.setHistoryRef(this);
 	}
 
 	public static void setTableHistory(TableHistory tableHistory) {
 		staticTableHistory = tableHistory;
 	}
 
+	public static void setTableTag(TableTag tableTag) {
+		staticTableTag = tableTag;
+	}
+	
+	public static void setTableAlert(TableAlert tableAlert) {
+		staticTableAlert = tableAlert;
+	}
+	
 	/**
 	 * @return Returns the historyId.
 	 */
@@ -101,6 +147,18 @@ public class HistoryReference {
 	public HttpMessage getHttpMessage() throws HttpMalformedHeaderException, SQLException {
 		// fetch complete message
 		RecordHistory history = staticTableHistory.read(historyId);
+		if (history == null) {
+			return null;
+		}
+		if (history.getHttpMessage() != null) {
+			// ZAP: Support for multiple tags
+			List <RecordTag> tags = staticTableTag.getTagsForHistoryID(historyId);
+			for (RecordTag tag : tags) {
+				history.getHttpMessage().addTag(tag.getTag());
+			}
+		}
+		// ZAP: Init HttpMessage HistoryReference field
+		history.getHttpMessage().setHistoryRef(this);
 		return history.getHttpMessage();
 	}
 
@@ -136,6 +194,8 @@ public class HistoryReference {
 	public void delete() {
 		if (historyId > 0) {
 			try {
+				// ZAP: Support for multiple tags
+	            staticTableTag.deleteTagsForHistoryID(historyId);
 				staticTableHistory.delete(historyId);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -169,12 +229,88 @@ public class HistoryReference {
 		return sb.toString();
 	}
 
-	public void setTag(String tag) {
+	// ZAP: Support for multiple tags
+	public void addTag(String tag) {
 		try {
-			staticTableHistory.updateTag(historyId, tag);
+			staticTableTag.insert(historyId, tag);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void deleteTag(String tag) {
+		try {
+			staticTableTag.delete(historyId, tag);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public List<String> getTags() {
+		List<String> tags = new ArrayList<String>();
+		try {
+			List<RecordTag> rTags = staticTableTag
+					.getTagsForHistoryID(historyId);
+			for (RecordTag rTag : rTags) {
+				tags.add(rTag.getTag());
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tags;
+	}
+
+	// ZAP: Added setNote method to HistoryReference
+	public void setNote(String note) {
+		try {
+			staticTableHistory.updateNote(historyId, note);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public synchronized void addAlert(Alert alert) {
+		for (Alert a : alerts) {
+			if (a.equals(alert)) {
+				// We've already recorded it
+				return;
+			}
+		}
+		this.alerts.add(alert);
+		if (this.siteNode != null) {
+			siteNode.addAlert(alert);
+		}
+	}
+
+	public synchronized void updateAlert(Alert alert) {
+		for (Alert a : alerts) {
+			if (a.getAlertId() == alert.getAlertId()) {
+				// Have to use the alertId instead of 'equals' as any of the
+				// other params might have changed
+				this.alerts.remove(a);
+				this.alerts.add(alert);
+				if (this.siteNode != null) {
+					siteNode.updateAlert(alert);
+				}
+				return;
+			}
+		}
+	}
+
+	public int getHighestAlert() {
+		int i = Alert.RISK_INFO;
+		for (Alert a : alerts) {
+			if (a.getRisk() > i) {
+				i = a.getRisk();
+			}
+		}
+
+		return i;
+	}
+
+	public List<Alert> getAlerts() {
+		return this.alerts;
 	}
 	
 	public void setFlag(boolean flag) {

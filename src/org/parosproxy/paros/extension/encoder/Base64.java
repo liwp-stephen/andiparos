@@ -3,6 +3,9 @@
  */
 package org.parosproxy.paros.extension.encoder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Encodes and decodes to and from Base64 notation.
  * 
@@ -32,6 +35,9 @@ package org.parosproxy.paros.extension.encoder;
  * @version 1.3.4
  */
 public class Base64 {
+	
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(Base64.class);
 
 	/** Specify encoding (value is <tt>true</tt>). */
 	public final static boolean ENCODE = true;
@@ -435,14 +441,17 @@ public class Base64 {
 			try {
 				oos.close();
 			} catch (Exception e) {
+				log.warn(e.getMessage(), e);
 			}
 			try {
 				b64os.close();
 			} catch (Exception e) {
+				log.warn(e.getMessage(), e);
 			}
 			try {
 				baos.close();
 			} catch (Exception e) {
+				log.warn(e.getMessage(), e);
 			}
 		} // end finally
 
@@ -729,10 +738,12 @@ public class Base64 {
 			try {
 				bais.close();
 			} catch (Exception e) {
+				log.warn(e.getMessage(), e);
 			}
 			try {
 				ois.close();
 			} catch (Exception e) {
+				log.warn(e.getMessage(), e);
 			}
 		} // end finally
 	} // end decodeObject

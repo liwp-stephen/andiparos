@@ -42,6 +42,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionListener;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
@@ -73,6 +74,10 @@ public class SpiderDialog extends AbstractDialog implements TreeSelectionListene
 	private JLabel jLabel4 = null;
 	private JLabel jLabel5 = null;
 	private JScrollPane jScrollPane = null;
+	
+	// ZAP: Added logger
+	private Logger logger = Logger.getLogger(SpiderDialog.class);
+	
     /**
      * @throws HeadlessException
      */
@@ -339,7 +344,8 @@ public class SpiderDialog extends AbstractDialog implements TreeSelectionListene
                     getTxtDisplay().setText(tmp);
                 }
             } catch (Exception e1) {
-                
+            	// ZAP: Log the exception
+            	logger.error(e1.getMessage(), e1);
             }
 		}
 	}

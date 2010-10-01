@@ -20,6 +20,7 @@
  */
 package org.parosproxy.paros.core.scanner;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.extension.report.ReportGenerator;
 import org.parosproxy.paros.model.HistoryReference;
@@ -32,14 +33,16 @@ public class Alert implements Comparable<Alert> {
 	public static final int RISK_MEDIUM = 2;
 	public static final int RISK_HIGH = 3;
 
-	public static final int SUSPICIOUS = 0;
-	public static final int WARNING = 1;
+	// ZAP: Added FALSE_POSITIVE
+	public static final int FALSE_POSITIVE = 0;
+	public static final int SUSPICIOUS = 1;
+	public static final int WARNING = 2;
 
-	public static final String MSG_RISK[] = { "Informational", "Low", "Medium",
-			"High" };
-	public static final String MSG_RELIABILITY[] = { "Suspicious", "Warning" };
-
-	private int alertId = 0;
+	public static final String MSG_RISK[] = { "Informational", "Low", "Medium", "High" };
+	// ZAP: Added "false positive"
+	public static final String MSG_RELIABILITY[] = {"False Positive", "Suspicious", "Warning"};
+	
+	private int	alertId = -1;	// ZAP: Changed default alertId
 	private int pluginId = 0;
 	private String alert = "";
 	private int risk = RISK_INFO;
@@ -51,6 +54,11 @@ public class Alert implements Comparable<Alert> {
 	private String solution = "";
 	private String reference = "";
 	private HttpMessage message = null;
+	// ZAP: Added sourceHistoryId to Alert
+	private int	sourceHistoryId = 0;
+	private HistoryReference historyRef = null;
+	// ZAP: Added logger
+	Logger logger = Logger.getLogger(Alert.class);
 
 	public Alert(int pluginId) {
 		this.pluginId = pluginId;
@@ -62,21 +70,42 @@ public class Alert implements Comparable<Alert> {
 		setRiskReliability(risk, reliability);
 		setAlert(alert);
 	}
+	
+	
 
 	public Alert(RecordAlert recordAlert) {
-		this(recordAlert.getPluginId(), recordAlert.getRisk(), recordAlert
-				.getReliability(), recordAlert.getAlert());
-		HistoryReference ref = null;
-		try {
-			ref = new HistoryReference(recordAlert.getHistoryId());
-			setDetail(recordAlert.getDescription(), recordAlert.getUri(),
-					recordAlert.getParam(), recordAlert.getOtherInfo(),
-					recordAlert.getSolution(), recordAlert.getReference(), ref
-							.getHttpMessage());
+	    this(recordAlert.getPluginId(), recordAlert.getRisk(), recordAlert.getReliability(), recordAlert.getAlert());
+	    // ZAP: Set the alertId
+	    this.alertId = recordAlert.getAlertId();
+        try {
+        	historyRef = new HistoryReference(recordAlert.getHistoryId());
+            setDetail(recordAlert.getDescription(), recordAlert.getUri(), 
+            		recordAlert.getParam(), recordAlert.getOtherInfo(), 
+            		recordAlert.getSolution(), recordAlert.getReference(), 
+            		historyRef.getHttpMessage());
+            // ZAP: Set up the Alert History Id
 
-		} catch (Exception e) {
-		}
-
+        } catch (Exception e) {
+        	// ZAP: Log the exception
+        	logger.error(e.getMessage(), e);
+        }
+	    
+	}
+	
+	public Alert(RecordAlert recordAlert, HistoryReference ref) {
+	    this(recordAlert.getPluginId(), recordAlert.getRisk(), recordAlert.getReliability(), recordAlert.getAlert());
+	    // ZAP: Set the alertId
+	    this.alertId = recordAlert.getAlertId();
+		historyRef = ref;
+        try {
+            setDetail(recordAlert.getDescription(), recordAlert.getUri(), 
+            		recordAlert.getParam(), recordAlert.getOtherInfo(), 
+            		recordAlert.getSolution(), recordAlert.getReference(), 
+            		ref == null ? null : ref.getHttpMessage());
+        } catch (Exception e) {
+        	// ZAP: Log the exception
+        	logger.error(e.getMessage(), e);
+        }
 	}
 
 	public void setRiskReliability(int risk, int reliability) {
@@ -102,6 +131,8 @@ public class Alert implements Comparable<Alert> {
 	}
 
 	public void setUri(String uri) {
+		// ZAP: Cope with null
+	    if (uri == null) return;
 		this.uri = new String(uri);
 	}
 
@@ -213,20 +244,17 @@ public class Alert implements Comparable<Alert> {
 		sb.append("  <alert>" + alert + "</alert>\r\n");
 		sb.append("  <riskcode>" + risk + "</riskcode>\r\n");
 		sb.append("  <reliability>" + reliability + "</reliability>\r\n");
-		sb.append("  <riskdesc>"
-				+ replaceEntity(MSG_RISK[risk] + " ("
-						+ MSG_RELIABILITY[reliability] + ")")
-				+ "</riskdesc>\r\n");
-		sb.append("  <desc>" + paragraph(replaceEntity(description))
-				+ "</desc>\r\n");
+		sb.append("  <riskdesc>" + replaceEntity(MSG_RISK[risk] + " (" + MSG_RELIABILITY[reliability] + ")") + "</riskdesc>\r\n");
+		sb.append("  <desc>" + paragraph(replaceEntity(description)) + "</desc>\r\n");
 
 		sb.append(urls);
 
-		sb.append("  <solution>" + paragraph(replaceEntity(solution))
-				+ "</solution>\r\n");
-		sb.append("  <reference>" + paragraph(replaceEntity(reference))
-				+ "</reference>\r\n");
-
+		sb.append("  <solution>" + paragraph(replaceEntity(solution)) + "</solution>\r\n");
+		// ZAP: Added otherInfo to the report
+        if (otherInfo != null && otherInfo.length() > 0) {
+        	sb.append("  <otherinfo>" + paragraph(replaceEntity(otherInfo)) + "</otherinfo>\r\n");
+        }
+		sb.append("  <reference>" + paragraph(replaceEntity(reference)) + "</reference>\r\n");
 		sb.append("</alertitem>\r\n");
 		return sb.toString();
 	}
@@ -361,5 +389,24 @@ public class Alert implements Comparable<Alert> {
 				+ breakNoSpaceString(replaceEntity(otherInfo))
 				+ "</otherinfo>\r\n");
 		return sb.toString();
+	}
+	
+	public int getSourceHistoryId() {
+		return sourceHistoryId;
+	}
+
+	public void setSourceHistoryId(int sourceHistoryId) {
+		this.sourceHistoryId = sourceHistoryId;
+	}
+	
+	public HistoryReference getHistoryRef () {
+		return this.historyRef;
+	}
+
+	public void setHistoryRef(HistoryReference historyRef) {
+		this.historyRef = historyRef;
+		if (historyRef != null) {
+			this.sourceHistoryId = historyRef.getHistoryId();
+		}
 	}
 }

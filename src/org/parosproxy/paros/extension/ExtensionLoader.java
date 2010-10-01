@@ -27,6 +27,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Proxy;
@@ -36,8 +37,10 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.AbstractParamDialog;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.parosproxy.paros.view.SiteMapPanel;
 import org.parosproxy.paros.view.TabbedPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.view.SiteMapListener;
 
 
 /**
@@ -52,6 +55,9 @@ public class ExtensionLoader {
     private Model model = null;
 
     private View view = null;
+    
+	// ZAP: Added logger
+    private Logger logger = Logger.getLogger(ExtensionLoader.class);
 
     public ExtensionLoader(Model model, View view) {
         
@@ -102,7 +108,30 @@ public class ExtensionLoader {
                     if (listener != null) {
                         proxy.addProxyListener(listener);
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                	// ZAP: Log the exception
+                	logger.error(e.getMessage(), e);
+                }
+            }
+        }
+        
+    }
+    
+ // ZAP: Added support for site map listeners
+    public void hookSiteMapListener(SiteMapPanel siteMapPanel) {
+        for (int i=0; i<getExtensionCount(); i++) {
+            ExtensionHook hook = (ExtensionHook) hookList.get(i);
+            List<SiteMapListener> listenerList = hook.getSiteMapListenerList();
+            for (int j=0; j<listenerList.size(); j++) {
+                try {
+                	SiteMapListener listener = (SiteMapListener) listenerList.get(j);
+                    if (listener != null) {
+                    	siteMapPanel.addSiteMapListenner(listener);
+                    }
+                } catch (Exception e) {
+                	// ZAP: Log the exception
+                	logger.error(e.getMessage(), e);
+                }
             }
         }
         
@@ -118,7 +147,10 @@ public class ExtensionLoader {
                     if (listener != null) {
                         listener.OptionsChanged(options);
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                	// ZAP: Log the exception
+                	logger.error(e.getMessage(), e);
+                }
             }
             
         }
@@ -147,7 +179,10 @@ public class ExtensionLoader {
                     if (listener != null) {
                         listener.sessionChanged(session);
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                	// ZAP: Log the exception
+                	logger.error(e.getMessage(), e);
+                }
             }
             
         }
@@ -188,7 +223,8 @@ public class ExtensionLoader {
                 panel = (AbstractParamPanel) panelList.get(i);
                 dialog.addParamPanel(ROOT, panel);
             } catch (Exception e) {
-                
+            	// ZAP: Log the exception
+            	logger.error(e.getMessage(), e);
             }
         }
         
@@ -203,7 +239,8 @@ public class ExtensionLoader {
                 // ZAP: added icon
         		tab.addTab(panel.getName() + " ", panel.getIcon(), panel);
             } catch (Exception e) {
-                
+            	// ZAP: Log the exception
+            	logger.error(e.getMessage(), e);
             }
         }
     }
@@ -272,6 +309,8 @@ public class ExtensionLoader {
         JMenu menuView = view.getMainFrame().getMainMenuBar().getMenuView();
         JMenu menuAnalyse = view.getMainFrame().getMainMenuBar().getMenuAnalyse();
         JMenu menuTools = view.getMainFrame().getMainMenuBar().getMenuTools();
+        JMenu menuHelp = view.getMainFrame().getMainMenuBar().getMenuHelp();
+        JMenu menuReport = view.getMainFrame().getMainMenuBar().getMenuReport();
         
         // process new menus
 
@@ -364,6 +403,33 @@ public class ExtensionLoader {
 
             view.getPopupList().add(item);
         }
+        
+        // ZAP: process Help menu
+        list = hookMenu.getHelpMenus();
+        
+        for (int i=0; i<list.size(); i++) {
+            item = (JMenuItem) list.get(i);
+            if (item == null) continue;
+            if (item == ExtensionHookMenu.MENU_SEPARATOR) {
+                menuHelp.addSeparator();
+                continue;
+            }
+
+            menuHelp.add(item, menuHelp.getItemCount());
+        }
+        // ZAP: process Report menu
+        list = hookMenu.getReportMenus();
+        
+        for (int i=0; i<list.size(); i++) {
+            item = (JMenuItem) list.get(i);
+            if (item == null) continue;
+            if (item == ExtensionHookMenu.MENU_SEPARATOR) {
+                menuReport.addSeparator();
+                continue;
+            }
+
+            menuReport.add(item, menuReport.getItemCount());
+        }
 
     }
     
@@ -374,7 +440,8 @@ public class ExtensionLoader {
                 AbstractParam paramSet = list.get(i);
                 model.getOptionsParam().addParamSet(paramSet);
             } catch (Exception e) {
-                
+            	// ZAP: Log the exception
+            	logger.error(e.getMessage(), e);
             }
         }
     }

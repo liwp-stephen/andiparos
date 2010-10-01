@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.FileXML;
 import org.parosproxy.paros.network.HttpMessage;
@@ -45,6 +47,9 @@ public class Session extends FileXML {
 	private static final String[] PATH_SESSION_DESC = { ROOT, SESSION_DESC };
 	private static final String[] PATH_SESSION_ID = { ROOT, SESSION_ID };
 	private static final String[] PATH_SESSION_NAME = { ROOT, SESSION_NAME };
+
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(Session.class);
 
 	// other runtime members
 	private Model model = null;
@@ -77,10 +82,10 @@ public class Session extends FileXML {
 
 	public void discard() {
 		try {
-			model.getDb().getTableHistory()
-					.deleteHistorySession(getSessionId());
+			model.getDb().getTableHistory().deleteHistorySession(getSessionId());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 		}
 	}
 
@@ -161,6 +166,8 @@ public class Session extends FileXML {
 				if (i % 100 == 99)
 					Thread.yield();
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+	        	log.warn(e.getMessage(), e);
 			}
 		}
 
@@ -217,6 +224,8 @@ public class Session extends FileXML {
 				try {
 					save(fileName);
 				} catch (Exception e) {
+					// ZAP: Log exceptions
+		        	log.warn(e.getMessage(), e);
 					thrownException = e;
 				}
 				if (callback != null) {
@@ -299,6 +308,8 @@ public class Session extends FileXML {
 			try {
 				saveSiteTree((SiteNode) node.getChildAt(i));
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+	        	log.warn(e.getMessage(), e);
 			}
 		}
 

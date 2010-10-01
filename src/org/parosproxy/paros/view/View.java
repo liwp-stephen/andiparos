@@ -24,8 +24,10 @@ import java.util.Vector;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenu;
@@ -182,6 +184,18 @@ public class View implements ViewDelegate {
 		dialog.setText(s);
 		dialog.centreDialog();
 		return dialog;
+	}
+	
+	// ZAP: Added main toolbar mathods
+    public void addMainToolbarButton (JButton button) {
+    	this.getMainFrame().getMainToolbarPanel().addButton(button);
+    }
+    
+    public void addMainToolbarSeparator () {
+    	this.getMainFrame().getMainToolbarPanel().addSeparator();
+    }
+	public void addMainToolbarButton(JToggleButton button) {
+    	this.getMainFrame().getMainToolbarPanel().addButton(button);
 	}
 
 }

@@ -19,10 +19,12 @@
  */
 package org.parosproxy.paros.extension.history;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -37,6 +39,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -44,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JList;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
@@ -65,15 +69,14 @@ public class LogPanel extends AbstractPanel implements Runnable {
 
 	private JScrollPane scrollLog = null;
 	private JList listLog = null;
+	// ZAP: Added history (filter) toolbar
+	private JPanel historyPanel = null;
+	private JToolBar panelToolbar = null;
+	private JButton filterButton = null;
+	private JLabel filterStatus = null;
 
 	private HttpPanel requestPanel = null;
 	private HttpPanel responsePanel = null;
-	private JPanel jPanel = null;
-	private JLabel uriFilterLabel = null;
-	private JTextField uriFilter = null;
-	private JLabel methodLabel = null;
-	private JComboBox methodList = null;
-	private JCheckBox filterInverse = null;
 	private ExtensionHistory extension = null;
 
 
@@ -85,126 +88,20 @@ public class LogPanel extends AbstractPanel implements Runnable {
 		initialize();
 	}
 
-	private void initialize() {
-		GridBagConstraints gridBagConstraints0 = new GridBagConstraints();
-		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-
-		this.setLayout(new GridBagLayout());
+	private  void initialize() {
+		this.setLayout(new BorderLayout());
 		this.setSize(600, 200);
-		gridBagConstraints0.anchor = GridBagConstraints.NORTHWEST;
-		gridBagConstraints0.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints0.gridx = 0;
-		gridBagConstraints0.gridy = 0;
-		gridBagConstraints0.weightx = 1.0;
-		
-		gridBagConstraints1.gridx = 0;
-		gridBagConstraints1.gridy = 1;
-		gridBagConstraints1.weightx = 1.0;
-		gridBagConstraints1.weighty = 1.0;
-		gridBagConstraints1.fill = GridBagConstraints.BOTH;
-		gridBagConstraints1.ipadx = 0;
-		gridBagConstraints1.ipady = 0;
-
-		this.add(getJPanel(), gridBagConstraints0);
-		this.add(getScrollLog(), gridBagConstraints1);
-
+		this.add(getHistoryPanel(), BorderLayout.CENTER);
 	}
+	
 
 	void setExtension(ExtensionHistory extension) {
 		this.extension = extension;
 	}
 
-	/**
-	 * This method initializes jPanel
-	 * 
-	 * @return JPanel
-	 */
-	private JPanel getJPanel() {
-		if (jPanel == null) {
-			
-			methodLabel = new JLabel("HTTP Method: ");
-			String[] methods = {"ALL", "POST", "GET", "HEAD"};
-			methodList = new JComboBox(methods);
-			methodList.setSelectedIndex(0);
-			
-			uriFilterLabel = new JLabel("URI: ");
-			uriFilter = new JTextField();
-			uriFilter.setColumns(50);
-			filterInverse = new JCheckBox("Filter inverse");
-			JButton jButton = new JButton("Filter");
-
-			jPanel = new JPanel();
-			jPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			
-			jPanel.add(methodLabel);
-			jPanel.add(methodList);
-			jPanel.add(uriFilterLabel);
-			jPanel.add(uriFilter);
-			jPanel.add(filterInverse);
-			jPanel.add(jButton);
-
-			
-			// HTTP Method Filter
-			methodList.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					String filter[] = { (String)methodList.getSelectedItem(), uriFilter.getText() };
-					boolean inverseFilter = filterInverse.isSelected();
-					extension.getProxyListenerLog().setUriFilter(filter, inverseFilter);
-					extension.searchHistoryByURI(filter, inverseFilter);
-				}
-			});
-			
-			
-			// URI Filter
-			uriFilter.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					String filter[] = { (String)methodList.getSelectedItem(), uriFilter.getText() };
-					boolean inverseFilter = filterInverse.isSelected();
-					extension.getProxyListenerLog().setUriFilter(filter, inverseFilter);
-					extension.searchHistoryByURI(filter, inverseFilter);
-				}
-			});
-			
-			// Filter inversion
-			filterInverse.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					String filter[] = { (String)methodList.getSelectedItem(), uriFilter.getText() };
-					boolean inverseFilter = filterInverse.isSelected();
-					extension.getProxyListenerLog().setUriFilter(filter, inverseFilter);
-					extension.searchHistoryByURI(filter, inverseFilter);
-				}
-			});
-			
-			// Filter Button
-			jButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					String filter[] = { (String)methodList.getSelectedItem(), uriFilter.getText() };
-					boolean inverseFilter = filterInverse.isSelected();
-					extension.getProxyListenerLog().setUriFilter(filter, inverseFilter);
-					extension.searchHistoryByURI(filter, inverseFilter);
-				}
-			});
-			
-			
-			
-
-		}
-		return jPanel;
-	}
-
-	public String getFilterString() {
-		String filterString = uriFilter.getText();
-		return filterString;
-	}
-
-	/**
-	 * This method initializes scrollLog
-	 * 
-	 * @return JScrollPane
-	 */
-	private JScrollPane getScrollLog() {
+	private javax.swing.JScrollPane getScrollLog() {
 		if (scrollLog == null) {
-			scrollLog = new JScrollPane();
+			scrollLog = new javax.swing.JScrollPane();
 			scrollLog.setViewportView(getListLog());
 			scrollLog.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			scrollLog.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -213,6 +110,126 @@ public class LogPanel extends AbstractPanel implements Runnable {
 		}
 		return scrollLog;
 	}
+	
+	// ZAP
+	private JPanel getHistoryPanel() {
+		if (historyPanel == null) {
+
+			historyPanel = new javax.swing.JPanel();
+			historyPanel.setLayout(new java.awt.GridBagLayout());
+			historyPanel.setName("History Panel");
+			
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+
+			gridBagConstraints1.gridx = 0;
+			gridBagConstraints1.gridy = 0;
+			gridBagConstraints1.weightx = 1.0D;
+			gridBagConstraints1.insets = new java.awt.Insets(2,2,2,2);
+			gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHWEST;
+			
+			gridBagConstraints2.gridx = 0;
+			gridBagConstraints2.gridy = 1;
+			gridBagConstraints2.weightx = 1.0;
+			gridBagConstraints2.weighty = 1.0;
+			gridBagConstraints2.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints2.fill = java.awt.GridBagConstraints.BOTH;
+			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
+			
+			historyPanel.add(this.getPanelToolbar(), gridBagConstraints1);
+			historyPanel.add(getScrollLog(), gridBagConstraints2);
+
+		}
+		return historyPanel;
+	}
+	
+	// ZAP
+	private JToolBar getPanelToolbar() {
+		if (panelToolbar == null) {
+			
+			panelToolbar = new javax.swing.JToolBar();
+			panelToolbar.setLayout(new java.awt.GridBagLayout());
+			panelToolbar.setEnabled(true);
+			panelToolbar.setFloatable(false);
+			panelToolbar.setRollover(true);
+			panelToolbar.setPreferredSize(new java.awt.Dimension(800,30));
+			panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			panelToolbar.setName("History Toolbar");
+			
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsX = new GridBagConstraints();
+
+			gridBagConstraints1.gridx = 0;
+			gridBagConstraints1.gridy = 0;
+			gridBagConstraints1.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints1.anchor = java.awt.GridBagConstraints.WEST;
+			
+			// TODO this shouldnt push the filter button off the lhs
+			gridBagConstraints2.gridx = 1;
+			gridBagConstraints2.gridy = 0;
+			gridBagConstraints2.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints2.anchor = java.awt.GridBagConstraints.WEST;
+
+			gridBagConstraints3.gridx = 2;
+			gridBagConstraints3.gridy = 0;
+			gridBagConstraints3.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints3.anchor = java.awt.GridBagConstraints.WEST;
+
+			gridBagConstraints4.gridx = 3;
+			gridBagConstraints4.gridy = 0;
+			gridBagConstraints4.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints4.anchor = java.awt.GridBagConstraints.WEST;
+
+			gridBagConstraints5.gridx = 4;
+			gridBagConstraints5.gridy = 0;
+			gridBagConstraints5.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints5.anchor = java.awt.GridBagConstraints.WEST;
+
+			gridBagConstraintsX.gridx = 5;
+			gridBagConstraintsX.gridy = 0;
+			gridBagConstraintsX.weightx = 1.0;
+			gridBagConstraintsX.weighty = 1.0;
+			gridBagConstraintsX.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraintsX.anchor = java.awt.GridBagConstraints.EAST;
+			gridBagConstraintsX.fill = java.awt.GridBagConstraints.HORIZONTAL;
+
+			filterStatus = new JLabel("Filter: OFF");
+			JLabel t1 = new JLabel();
+
+			panelToolbar.add(getFilterButton(), gridBagConstraints1);
+			panelToolbar.add(filterStatus, gridBagConstraints2);
+			/*
+			panelToolbar.add(getBtnSearch(), gridBagConstraints3);
+			panelToolbar.add(getBtnNext(), gridBagConstraints4);
+			panelToolbar.add(getBtnPrev(), gridBagConstraints5);
+			*/
+			panelToolbar.add(t1, gridBagConstraintsX);
+		}
+		return panelToolbar;
+	}
+
+	// ZAP
+	private JButton getFilterButton() {
+		if (filterButton == null) {
+			filterButton = new JButton();
+			filterButton.setIcon(new ImageIcon(getClass().getResource("/resource/icons/pill.png")));	// 'filter' icon
+			filterButton.setToolTipText("Filter");
+
+			filterButton.addActionListener(new java.awt.event.ActionListener() { 
+
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					extension.showFilterPlusDialog();
+				}
+			});
+		}
+		return filterButton;
+	}
+	
 
 	/**
 	 * This method initializes listLog
@@ -231,6 +248,20 @@ public class LogPanel extends AbstractPanel implements Runnable {
 				public void mousePressed(MouseEvent e) {
 					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
 						// right mouse button
+						
+						// ZAP: Select history list item on right click
+					    int Idx = listLog.locationToIndex( e.getPoint() );
+					    if ( Idx >= 0 ) {
+					    	Rectangle Rect = listLog.getCellBounds( Idx, Idx );
+					    	Idx = Rect.contains( e.getPoint().x, e.getPoint().y ) ? Idx : -1;
+					    }
+					    if ( Idx < 0 || !listLog.getSelectionModel().isSelectedIndex( Idx ) ) {
+					    	listLog.getSelectionModel().clearSelection();
+					    	if ( Idx >= 0 ) {
+					    		listLog.getSelectionModel().setSelectionInterval( Idx, Idx );
+					    	}
+					    }
+						
 						View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
 						return;
 					}
@@ -402,4 +433,9 @@ public class LogPanel extends AbstractPanel implements Runnable {
 		}
 		return logPanelCellRenderer;
 	}
+	
+	public void setFilterStatus (HistoryFilter filter) {
+    	filterStatus.setText(filter.toShortString());
+    	filterStatus.setToolTipText(filter.toLongString());
+    }
 }

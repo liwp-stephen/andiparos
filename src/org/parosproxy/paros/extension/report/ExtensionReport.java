@@ -25,6 +25,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -43,6 +44,9 @@ public class ExtensionReport extends ExtensionAdaptor implements CommandLineList
 	private JMenuItem menuItemLastScanReport = null;
 	private CommandLineArgument[] arguments = new CommandLineArgument[1];
 
+	// ZAP Added logger
+	private Logger logger = Logger.getLogger(ExtensionReport.class);
+	
     /**
      * 
      */
@@ -70,7 +74,7 @@ public class ExtensionReport extends ExtensionAdaptor implements CommandLineList
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 	    if (getView() != null) {
-	        extensionHook.getHookMenu().addNewMenu(getMenuReport());
+	    	extensionHook.getHookMenu().addReportMenuItem(getMenuItemLastScanReport());
 	    }
         extensionHook.addCommandLine(getCommandLineArguments());
 
@@ -85,7 +89,7 @@ public class ExtensionReport extends ExtensionAdaptor implements CommandLineList
 	private JMenu getMenuReport() {
 		if (menuReport == null) {
 			menuReport = new JMenu();
-			menuReport.setText("Report");
+			menuReport.setText("Reports");
 			menuReport.setMnemonic(KeyEvent.VK_R);
 			menuReport.add(getMenuItemLastScanReport());
 		}
@@ -105,7 +109,7 @@ public class ExtensionReport extends ExtensionAdaptor implements CommandLineList
 	private JMenuItem getMenuItemLastScanReport() {
 		if (menuItemLastScanReport == null) {
 			menuItemLastScanReport = new JMenuItem();
-			menuItemLastScanReport.setText("Last Scan Report");
+			menuItemLastScanReport.setText("Generate Report...");
 			menuItemLastScanReport.addActionListener(new java.awt.event.ActionListener() { 
 
 				public void actionPerformed(java.awt.event.ActionEvent e) {    
@@ -133,7 +137,8 @@ public class ExtensionReport extends ExtensionAdaptor implements CommandLineList
                 report.generate(fileName, getModel());
                 System.out.println("Last Scan Report generated at " + fileName);
             } catch (Exception e) {
-                
+            	// ZAP: Log the exception
+            	logger.error(e.getMessage(), e);
             }
         } else {
             return;
@@ -145,8 +150,4 @@ public class ExtensionReport extends ExtensionAdaptor implements CommandLineList
         arguments[ARG_LAST_SCAN_REPORT_IDX] = new CommandLineArgument("-last_scan_report", 1, null, "", "-last_scan_report [file_path]: Generate 'Last Scan Report' into the file_path provided.");
         return arguments;
     }
-	
-	
-
-	
-      }
+}

@@ -80,11 +80,11 @@ public class FilterLogCookie extends FilterAdaptor {
 						uri.setQuery(null);
 						String sUri = uri.toString();
 						cookieList.add(cookie);
-						getView().getOutputPanel().append(
-								sUri + DELIM + cookie + "\n");
+						getView().getOutputPanel().append(sUri + DELIM + cookie + "\n");
 
 					} catch (URIException e) {
-						e.printStackTrace();
+						// ZAP: Print stack trace to Output tab
+                    	getView().getOutputPanel().append(e);
 					}
 				}
 			}

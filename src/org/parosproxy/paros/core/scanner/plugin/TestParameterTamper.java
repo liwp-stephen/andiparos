@@ -22,6 +22,8 @@ package org.parosproxy.paros.core.scanner.plugin;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -30,12 +32,9 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 
 public class TestParameterTamper extends AbstractAppParamPlugin {
-
-	// private static final String[] PARAM_LIST = {"", "@", "+", "%A", "%1Z",
-	// "%", "%00", "|"};
-	// problem sending "%A", "%1Z" to server - assume server can handle properly
-	// on this.
-	// %0A not included as this is in CRLFInjection already.
+	
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(TestParameterTamper.class);
 
 	private static String[] PARAM_LIST = { "", "", "@", "+", AbstractPlugin.getURLDecode("%00"), "|" };
 
@@ -106,6 +105,8 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 		try {
 			sendAndReceive(normalMsg);
 		} catch (Exception e) {
+			// ZAP: Log exceptions
+        	log.warn(e.getMessage(), e);
 			return;
 		}
 
@@ -130,6 +131,8 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 				}
 
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+	        	log.warn(e.getMessage(), e);
 			}
 
 		}

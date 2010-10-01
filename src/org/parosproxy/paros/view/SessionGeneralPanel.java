@@ -162,6 +162,10 @@ public class SessionGeneralPanel extends AbstractParamPanel {
 		Session session = (Session) obj;
 		session.setSessionName(getTxtSessionName().getText());
 		session.setSessionDesc(getTxtDescription().getText());
+		// ZAP Save session details
+	    if (!session.isNewState()) {
+	    	session.save(session.getFileName());
+	    }
 
 	}
 

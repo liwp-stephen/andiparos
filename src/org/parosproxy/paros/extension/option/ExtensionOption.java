@@ -38,6 +38,7 @@ public class ExtensionOption extends ExtensionAdaptor {
 	private OptionsHttpHeaderPanel optionsHttpHeaderPanel = null;
 	private OptionsLocalProxyPanel optionsLocalProxyPanel = null;
 	private OptionsViewPanel optionsViewPanel = null;
+	//TODO: ZAP options
 
     /**
      * 

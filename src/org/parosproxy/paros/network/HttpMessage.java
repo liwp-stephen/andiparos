@@ -21,6 +21,7 @@
  */
 package org.parosproxy.paros.network;
 
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -28,6 +29,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.parosproxy.paros.model.HistoryReference;
 
 /**
  * Representation of a HTTP message request (header and body) and response
@@ -45,9 +50,25 @@ public class HttpMessage {
 	private Object userObject = null;
 	private int timeElapsed = 0;
 	private long timeSent = 0;
-	// ZAP: Support for multiple tags
-    private String tag = null;
 	private boolean flag = false;
+
+    // ZAP: Added note to HttpMessage
+    private String note = "";
+    // ZAP: Support for multiple tags
+    private Vector<String> tags = new Vector<String>();
+    // ZAP: Added historyRef
+    private HistoryReference historyRef = null;
+    // ZAP: Added log
+    private static Log log = LogFactory.getLog(HttpMessage.class);
+
+
+    public HistoryReference getHistoryRef() {
+		return historyRef;
+	}
+
+	public void setHistoryRef(HistoryReference historyRef) {
+		this.historyRef = historyRef;
+	}
 
 	/**
 	 * Constructor for a empty HTTP message.
@@ -256,6 +277,8 @@ public class HttpMessage {
 				result = this.getRequestHeader().getURI().toString()
 					.equalsIgnoreCase(msg.getRequestHeader().getURI().toString());
 			} catch (Exception e1) {
+				// ZAP: log error
+				log.error(e1.getMessage(), e1);
 			}
 		}
 
@@ -315,7 +338,8 @@ public class HttpMessage {
 			result = true;
 
 		} catch (URIException e) {
-			e.printStackTrace();
+			// ZAP: log error
+			log.error(e.getMessage(), e);
 		}
 
 		return result;
@@ -387,10 +411,112 @@ public class HttpMessage {
 				}
 				set.add(key);
 			} catch (Exception e) {
+				// ZAP: log error
+				log.error(e.getMessage(), e);
 			}
 		}
 
 		return set;
+	}
+	
+	
+	// ZAP: Introduced HtmlParameter
+	private TreeSet<HtmlParameter> getParamsSet(HtmlParameter.Type type, String params) {
+		TreeSet<HtmlParameter> set = new TreeSet<HtmlParameter>();
+		//!!! note: this means param not separated by & is not parsed
+	    String[] keyValue = staticPatternParam.split(params);
+		String key = null;
+		String value = null;
+		int pos = 0;
+		for (int i=0; i<keyValue.length; i++) {
+			key = null;
+			value = null;
+			pos = keyValue[i].indexOf('=');
+			try {
+				if (pos > 0) {
+					// key=value type param found
+					key = keyValue[i].substring(0,pos);
+					value = keyValue[i].substring(pos+1);
+					set.add(new HtmlParameter (type, key, value));
+				} else if (keyValue[i].length() > 0) {
+					set.add(new HtmlParameter (type, key, ""));
+				}
+				
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+		
+		return set;
+	}
+	
+	// ZAP: Added getParamNames
+	public String [] getParamNames() {
+		Vector<String> v = new Vector<String>();
+		try {
+			// Get the params names from the query
+			String query = this.getRequestHeader().getURI().getQuery();
+			if (query == null) {
+				query = "";
+			}
+			SortedSet pns = this.getParamNameSet(query);
+			Iterator iterator = pns.iterator();
+			for (int i=0; iterator.hasNext(); i++) {
+			    String name = (String) iterator.next();
+			    if (name != null) {
+			    	v.add(name);
+			    }
+			}
+			if (getRequestHeader().getMethod().equalsIgnoreCase(HttpRequestHeader.POST)) {
+				// Get the param names from the POST
+				query = this.getRequestBody().toString();
+				if (query == null) {
+					query = "";
+				}
+				pns = this.getParamNameSet(query);
+			    iterator = pns.iterator();
+			    for (int i=0; iterator.hasNext(); i++) {
+			        String name = (String) iterator.next();
+			        if (name != null) {
+			        	v.add(name);
+			        }
+			    }
+				
+			}
+		} catch (URIException e) {
+			log.error(e.getMessage(), e);
+		}
+		String [] a = new String [v.size()];
+		v.toArray(a);
+		return a;
+	}
+	
+	// ZAP: Added getUrlParams
+	public TreeSet<HtmlParameter> getUrlParams() {
+		// Get the params names from the query
+		String query = null;
+		try {
+			query = this.getRequestHeader().getURI().getQuery();
+		} catch (URIException e) {
+			log.error(e.getMessage(), e);
+		}
+		if (query == null) {
+			query = "";
+		}
+		return this.getParamsSet(HtmlParameter.Type.url, query);
+	}
+	
+	// ZAP: Added getFormParams
+	public TreeSet<HtmlParameter> getFormParams() {
+		String query = null;
+		if (getRequestHeader().getMethod().equalsIgnoreCase(HttpRequestHeader.POST)) {
+			// Get the param names from the POST
+			query = this.getRequestBody().toString();
+		}
+		if (query == null) {
+			query = "";
+		}
+		return this.getParamsSet(HtmlParameter.Type.form, query);
 	}
 
 	/**
@@ -476,22 +602,33 @@ public class HttpMessage {
 		this.timeSent = timeSent;
 	}
 
-	/**
-     * @return Returns the tag.
+	public Vector<String> getTags() {
+    	return this.tags;
+    }
+    
+    public void addTag (String tag) {
+    	this.tags.add(tag);
+    }
+    
+    public void removeTag (String tag) {
+    	this.tags.remove(tag);
+    }
+    
+    /**
+     * @return Returns the note.
      */
-    public String getTag() {
-            return tag;
+    public String getNote() {
+        return note;
     }
 
     /**
-     * @param tag
-     *            The tag to set.
+     * @param note The note to set.
      */
-    public void setTag(String tag) {
-            this.tag = tag;
+    public void setNote(String note) {
+        this.note = note;
     }
 
-	
+	//TODO Rename to Mark
 	/**
      * @return Returns the flag.
      */

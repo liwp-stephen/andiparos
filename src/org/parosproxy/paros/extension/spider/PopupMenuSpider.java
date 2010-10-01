@@ -27,6 +27,7 @@ import javax.swing.JTree;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenu;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
@@ -43,6 +44,9 @@ public class PopupMenuSpider extends ExtensionPopupMenu {
 
 	private ExtensionSpider extension = null;
     private JTree treeSite = null;
+    
+    //ZAP: Added logger
+    private Logger logger = Logger.getLogger(PopupMenuSpider.class);
     
     /**
      * 
@@ -81,7 +85,8 @@ public class PopupMenuSpider extends ExtensionPopupMenu {
 	                            extension.showDialog(tmp);
 	                        }
 	                    } catch (Exception e1) {
-	                        
+	                    	// ZAP: Log the exception
+	                    	logger.error(e1.getMessage(), e1);
 	                    }
 	                }
         		}

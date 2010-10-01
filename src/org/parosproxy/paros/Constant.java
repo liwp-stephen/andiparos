@@ -23,6 +23,7 @@ package org.parosproxy.paros;
 
 import java.io.File;
 import java.util.NoSuchElementException;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,6 +64,8 @@ public final class Constant {
 	public static final String FILE_CONFIG_DEFAULT = "xml/config.xml";
 	public static String FILE_CONFIG = "config.xml";
 	
+	
+	
 	public static final String FOLDER_PLUGIN = "plugin";
 	public static final String FOLDER_FILTER = "filter";
 	public static final String FOLDER_SESSION_DEFAULT = "session";
@@ -86,7 +89,10 @@ public final class Constant {
 	
 	public static final String USER_AGENT_DEFAULT = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0;)";
 	
-	public static boolean useNimbus = true;
+	// ZAP: Added i18n
+    public static ResourceBundle messages = null;
+   
+	public static boolean useNimbus = false;
 
 	private static String staticEyeCatcher = PROGRAM_NAME;
 	private static boolean staticSP = false;
@@ -94,6 +100,9 @@ public final class Constant {
 	private static Pattern patternLinux = Pattern.compile("linux", Pattern.CASE_INSENSITIVE);
 	private static Pattern patternSolaris = Pattern.compile("solaris", Pattern.CASE_INSENSITIVE);
 	private static Pattern patternOSX = Pattern.compile("mac", Pattern.CASE_INSENSITIVE);
+	
+	// ZAP: Added vulnerabilities file
+    public String VULNS_CONFIG = "xml/vulnerabilities.xml";
 	
 
 	public static String getEyeCatcher() {
@@ -220,6 +229,10 @@ public final class Constant {
 			ACCEPTED_LICENSE = ACCEPTED_LICENSE_DEFAULT;
 
 		}
+		
+		// ZAP: Init i18n
+        // TODO select correct locale!
+	    messages = ResourceBundle.getBundle("Messages");
 
 	}
 

@@ -38,6 +38,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.extension.Extension;
@@ -68,6 +70,9 @@ public class ManualRequestEditorDialog extends AbstractDialog {
 	private JPanel jPanel = null;
 	private JCheckBox chkFollowRedirect = null;
 	private JCheckBox chkUseTrackingSessionState = null;
+
+	// ZAP: Added logger
+    private static Log log = LogFactory.getLog(ManualRequestEditorDialog.class);
 
 
 	public ManualRequestEditorDialog() throws HeadlessException {
@@ -193,6 +198,8 @@ public class ManualRequestEditorDialog extends AbstractDialog {
 					httpSender = null;
 				}
 			} catch (Exception e) {
+				// ZAP: Log exceptions
+	        	   log.warn(e.getMessage(), e);
 			}
 			getPanelTab().setSelectedIndex(0);
 		}
@@ -281,7 +288,8 @@ public class ManualRequestEditorDialog extends AbstractDialog {
 				} catch (IOException ioe) {
 					getExtention().getView().showWarningDialog("IO error in sending request.");
 				} catch (Exception e) {
-
+					// ZAP: Log exceptions
+		        	   log.warn(e.getMessage(), e);
 				} finally {
 					btnSend.setEnabled(true);
 				}

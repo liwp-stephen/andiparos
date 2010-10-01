@@ -25,13 +25,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 
-/**
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class FilterLogRequestResponse extends FilterAdaptor {
 
 	private static final String logFile = "filter/message.txt";
@@ -41,6 +37,9 @@ public class FilterLogRequestResponse extends FilterAdaptor {
 	private BufferedWriter writer = null;
 	private long lastWriteTime = System.currentTimeMillis();
 	private int counter = 1;
+	
+	// ZAP Added logger
+    private Logger logger = Logger.getLogger(FilterLogRequestResponse.class);
 
 	/*
 	 * (non-Javadoc)
@@ -108,6 +107,8 @@ public class FilterLogRequestResponse extends FilterAdaptor {
 			// avoid close file frequently
 			// getWriter().close();
 		} catch (Exception e) {
+			// ZAP: Log the exception
+        	logger.error(e.getMessage(), e);
 		}
 
 	}
@@ -120,6 +121,8 @@ public class FilterLogRequestResponse extends FilterAdaptor {
 				writer.close();
 				writer = null;
 			} catch (IOException e) {
+				// ZAP: Log the exception
+	        	logger.error(e.getMessage(), e);
 			}
 		}
 	}

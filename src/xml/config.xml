@@ -9,7 +9,8 @@
 			<skipName></skipName>
 			<realm></realm>
 			<userName></userName>
-			<password></password>		
+			<password></password>
+			<prompt></prompt>
 		</proxyChain>
 		<auth></auth>
 	</connection>
@@ -34,6 +35,10 @@
 			<httpResponseHide404NotFound>0</httpResponseHide404NotFound>
 		</sitemap>
 	</view>
+	
+	<start>
+        <checkForUpdates>0</checkForUpdates>
+    </start>
 	
 	<certificate>
 		<use>0</use>
@@ -63,4 +68,88 @@
 			<customUserAgent></customUserAgent>
 		</httpHeader>
 	</filter>
+	
+	<pscans>
+		<names>html_tag_form</names>
+		<names>html_tag_password</names>
+		<names>html_type_password</names>
+		<names>html_type_hidden</names>
+		<names>html_type_upload</names>
+		<names>html_tag_object</names>
+		<names>html_tag_script</names>
+		<names>html_mailto</names>
+		<html_tag_form>
+			<type>TAG</type>
+			<config>Form</config>
+			<reqUrlRegex/>
+			<reqHeadRegex/>
+			<resHeadRegex/>
+			<resBodyRegex>&lt;form</resBodyRegex>
+			<enabled>true</enabled>
+		</html_tag_form>
+		<html_tag_password>
+			<type>TAG</type>
+			<config>Password</config>
+			<reqUrlRegex/>
+			<reqHeadRegex/>
+			<resHeadRegex/>
+			<resBodyRegex>&lt;password\s</resBodyRegex>
+			<enabled>true</enabled>
+		</html_tag_password>
+		<html_type_password>
+			<type>TAG</type>
+			<config>Password</config>
+			<reqUrlRegex/>
+			<reqHeadRegex/>
+			<resHeadRegex/>
+			<resBodyRegex>type\s*=\s*"?password"?</resBodyRegex>
+			<enabled>true</enabled>
+		</html_type_password>
+		<html_type_hidden>
+			<type>TAG</type>
+			<config>Hidden</config>
+			<reqUrlRegex/>
+			<reqHeadRegex/>
+			<resHeadRegex/>
+			<resBodyRegex>type\s*=\s*"?hidden"?</resBodyRegex>
+			<enabled>true</enabled>
+		</html_type_hidden>
+		<html_type_upload>
+			<type>TAG</type>
+			<config>Upload</config>
+			<reqUrlRegex/>
+			<reqHeadRegex/>
+			<resHeadRegex/>
+			<resBodyRegex>type\s*=\s*"?file"?</resBodyRegex>
+			<enabled>true</enabled>
+		</html_type_upload>
+		<html_tag_object>
+			<type>TAG</type>
+			<config>Object</config>
+			<reqUrlRegex/>
+			<reqHeadRegex/>
+			<resHeadRegex/>
+			<resBodyRegex>&lt;object\s</resBodyRegex>
+			<enabled>true</enabled>
+		</html_tag_object>
+		<html_tag_script>
+			<type>TAG</type>
+			<config>Script</config>
+			<reqUrlRegex/>
+			<reqHeadRegex/>
+			<resHeadRegex/>
+			<resBodyRegex>&lt;script</resBodyRegex>
+			<enabled>true</enabled>
+		</html_tag_script>
+		<html_mailto>
+			<type>TAG</type>
+			<config>MailTo</config>
+			<reqUrlRegex/>
+			<reqHeadRegex/>
+			<resHeadRegex/>
+			<resBodyRegex>&lt;.*href\s*"?mailto:</resBodyRegex>
+			<enabled>true</enabled>
+		</html_mailto>
+	</pscans>
+	
 </config>

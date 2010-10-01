@@ -21,6 +21,7 @@
 package org.parosproxy.paros.view;
 
 
+import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,6 +29,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -52,6 +54,8 @@ public class MainMenuBar extends JMenuBar {
 	private JMenu menuHelp = null;
 	private JMenuItem menuHelpAbout = null;
 	private JMenu menuAnalyse = null;
+	// ZAP: Added standard report menu
+	private JMenu menuReport = null;
 
 	/**
 	 * This method initializes
@@ -72,6 +76,7 @@ public class MainMenuBar extends JMenuBar {
 		this.add(getMenuEdit());
 		this.add(getMenuView());
 		this.add(getMenuAnalyse());
+		this.add(getMenuReport());
 		this.add(getMenuTools());
 		this.add(getMenuHelp());
 
@@ -153,7 +158,8 @@ public class MainMenuBar extends JMenuBar {
 			menuFile.add(getMenuFileNewSession());
 			menuFile.add(getMenuFileOpen());
 			menuFile.addSeparator();
-			menuFile.add(getMenuFileSave());
+			// ZAP: Removed the Save option, as it doesnt really do anything now
+			//menuFile.add(getMenuFileSave());
 			menuFile.add(getMenuFileSaveAs());
 			menuFile.addSeparator();
 			menuFile.add(getMenuFileProperties());
@@ -184,6 +190,8 @@ public class MainMenuBar extends JMenuBar {
 					}
 				}
 			});
+			// ZAP Added New Session accelerator
+			menuFileNewSession.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Event.CTRL_MASK, false));
 		}
 		return menuFileNewSession;
 	}
@@ -203,6 +211,8 @@ public class MainMenuBar extends JMenuBar {
 					getMenuFileSave().setEnabled(true);
 				}
 			});
+			// ZAP Added Open Session accelerator
+			menuFileOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK, false));
 		}
 		return menuFileOpen;
 	}
@@ -304,7 +314,7 @@ public class MainMenuBar extends JMenuBar {
 	 * 
 	 * @return JMenu
 	 */
-	private JMenu getMenuHelp() {
+	public JMenu getMenuHelp() {
 		if (menuHelp == null) {
 			menuHelp = new JMenu();
 			menuHelp.setText("Help");
@@ -314,6 +324,15 @@ public class MainMenuBar extends JMenuBar {
 		return menuHelp;
 	}
 
+	 // ZAP: Added standard report menu
+	public JMenu getMenuReport() {
+		if (menuReport == null) {
+			menuReport = new JMenu();
+			menuReport.setText("Report");
+		}
+		return menuReport;
+	}
+	
 	/**
 	 * This method initializes menuHelpAbout
 	 * 
@@ -341,7 +360,7 @@ public class MainMenuBar extends JMenuBar {
 	public JMenu getMenuAnalyse() {
 		if (menuAnalyse == null) {
 			menuAnalyse = new JMenu();
-			menuAnalyse.setText("Analyze");
+			menuAnalyse.setText("Analyse");
 			menuAnalyse.setMnemonic(KeyEvent.VK_A);
 		}
 		return menuAnalyse;

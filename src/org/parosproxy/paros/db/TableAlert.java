@@ -26,6 +26,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -48,29 +50,75 @@ public class TableAlert extends AbstractTable {
 	private static final String SOLUTION = "SOLUTION";
 	private static final String REFERENCE = "REFERENCE";
 	private static final String HISTORYID = "HISTORYID";
+	private static final String SOURCEHISTORYID	= "SOURCEHISTORYID";
 
 	private PreparedStatement psRead = null;
 	private PreparedStatement psInsert1 = null;
 	private CallableStatement psInsert2 = null;
 
 	private PreparedStatement psDeleteAlert = null;
+	
+	private PreparedStatement psUpdate = null;
+    private PreparedStatement psUpdateHistoryIds = null;
+
+    private PreparedStatement psGetAlertsForHistoryId = null;
 
 	public TableAlert() {
 		super();
 	}
 
 	protected void reconnect(Connection conn) throws SQLException {
-		psRead = conn.prepareStatement("SELECT TOP 1 * FROM ALERT WHERE "
-				+ ALERTID + " = ?");
-
-		psInsert1 = conn.prepareStatement("INSERT INTO ALERT (" + SCANID + ","
-				+ PLUGINID + "," + ALERT + "," + RISK + "," + RELIABILITY + ","
-				+ DESCRIPTION + "," + URI + "," + PARAM + "," + OTHERINFO + ","
-				+ SOLUTION + "," + REFERENCE + "," + HISTORYID
-				+ ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		// ZAP: Add the SOURCEHISTORYID column to the db if necessary
+        ResultSet rs = conn.getMetaData().getColumns(null, null, "ALERT", SOURCEHISTORYID);
+        if (!rs.next()) {
+            PreparedStatement stmt = conn.prepareStatement("ALTER TABLE ALERT ADD COLUMN SOURCEHISTORYID INT DEFAULT 0");
+            stmt.execute();
+        }
+        rs.close();
+		
+		psRead = conn.prepareStatement("SELECT TOP 1 * FROM ALERT WHERE " + ALERTID + " = ?");
+		
+		psInsert1 = conn.prepareStatement("INSERT INTO ALERT (" +
+				SCANID + "," +
+				PLUGINID + "," +
+				ALERT + "," +
+				RISK + "," +
+				RELIABILITY + "," +
+				DESCRIPTION + "," +
+				URI + "," +
+				PARAM + "," +
+				OTHERINFO + "," +
+				SOLUTION + "," +
+				REFERENCE + "," +
+				HISTORYID + "," +
+				SOURCEHISTORYID +
+			") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		
 		psInsert2 = conn.prepareCall("CALL IDENTITY();");
-		psDeleteAlert = conn.prepareStatement("DELETE FROM ALERT WHERE "
-				+ ALERTID + " = ?");
+		
+		psDeleteAlert = conn.prepareStatement("DELETE FROM ALERT WHERE " + ALERTID + " = ?");
+		
+		// ZAP: New prepared statement for updating an alert
+        psUpdate = conn.prepareStatement("UPDATE ALERT SET " +
+        		ALERT + " = ?, " + 
+        		RISK + " = ?," + 
+        		RELIABILITY + " = ?," + 
+        		DESCRIPTION + " = ?," +
+        		URI + " = ?," + 
+        		PARAM + " = ?," + 
+        		OTHERINFO + " = ?," + 
+        		SOLUTION + " = ?," + 		
+        		REFERENCE + " = ?, " + 		
+        		SOURCEHISTORYID + " = ? " + 
+        		"WHERE " + ALERTID + " = ?");
+
+        psUpdateHistoryIds = conn.prepareStatement("UPDATE ALERT SET " +
+        		HISTORYID + " = ?, " + 
+        		SOURCEHISTORYID + " = ? " + 
+        		"WHERE " + ALERTID + " = ?");
+
+        psGetAlertsForHistoryId = conn.prepareStatement(
+        		"SELECT * FROM ALERT WHERE " + SOURCEHISTORYID + " = ?");
 	}
 
 	public synchronized RecordAlert read(int alertId) throws SQLException {
@@ -80,10 +128,11 @@ public class TableAlert extends AbstractTable {
 		return build(rs);
 	}
 
+		
 	public synchronized RecordAlert write(int scanId, int pluginId,
-			String alert, int risk, int reliability, String description,
-			String uri, String query, String otherInfo, String solution,
-			String reference, int historyId) throws SQLException {
+		String alert, int risk, int reliability, String description,
+		String uri, String query, String otherInfo, String solution,
+		String reference, int historyId, int sourceHistoryId) throws SQLException {
 
 		psInsert1.setInt(1, scanId);
 		psInsert1.setInt(2, pluginId);
@@ -97,6 +146,7 @@ public class TableAlert extends AbstractTable {
 		psInsert1.setString(10, solution);
 		psInsert1.setString(11, reference);
 		psInsert1.setInt(12, historyId);
+		psInsert1.setInt(13, sourceHistoryId);
 		psInsert1.executeUpdate();
 
 		psInsert2.executeQuery();
@@ -109,13 +159,21 @@ public class TableAlert extends AbstractTable {
 	private RecordAlert build(ResultSet rs) throws SQLException {
 		RecordAlert alert = null;
 		if (rs.next()) {
-			alert = new RecordAlert(rs.getInt(ALERTID), rs.getInt(SCANID), rs
-					.getInt(PLUGINID), rs.getString(ALERT), rs.getInt(RISK), rs
-					.getInt(RELIABILITY), rs.getString(DESCRIPTION), rs
-					.getString(URI), rs.getString(PARAM), rs
-					.getString(OTHERINFO), rs.getString(SOLUTION), rs
-					.getString(REFERENCE), rs.getInt(HISTORYID));
-
+			alert = new RecordAlert(
+					rs.getInt(ALERTID),
+					rs.getInt(SCANID),
+					rs.getInt(PLUGINID),
+					rs.getString(ALERT),
+					rs.getInt(RISK),
+					rs.getInt(RELIABILITY),
+					rs.getString(DESCRIPTION),
+					rs.getString(URI),
+					rs.getString(PARAM),
+					rs.getString(OTHERINFO),
+					rs.getString(SOLUTION),
+					rs.getString(REFERENCE),
+					rs.getInt(HISTORYID),
+					rs.getInt(SOURCEHISTORYID));
 		}
 		return alert;
 
@@ -159,6 +217,49 @@ public class TableAlert extends AbstractTable {
 	public void deleteAlert(int alertId) throws SQLException {
 		psDeleteAlert.setInt(1, alertId);
 		psDeleteAlert.executeQuery();
+	}
+	
+	public synchronized void update(int alertId, String alert, 
+			int risk, int reliability, String description, String uri, 
+			String param, String otherInfo, String solution, String reference,
+			int sourceHistoryId) throws SQLException {
+	    
+		psUpdate.setString(1, alert);
+		psUpdate.setInt(2, risk);
+		psUpdate.setInt(3, reliability);
+		psUpdate.setString(4, description);
+		psUpdate.setString(5, uri);
+		psUpdate.setString(6, param);
+		psUpdate.setString(7, otherInfo);
+		psUpdate.setString(8, solution);
+		psUpdate.setString(9, reference);
+		psUpdate.setInt(10, sourceHistoryId);
+		psUpdate.setInt(11, alertId);
+		psUpdate.executeUpdate();
+	}
+
+	public synchronized void updateHistoryIds(int alertId, 
+			int historyId, int sourceHistoryId) throws SQLException {
+	    
+		psUpdateHistoryIds.setInt(1, historyId);
+		psUpdateHistoryIds.setInt(2, sourceHistoryId);
+		psUpdateHistoryIds.setInt(3, alertId);
+		psUpdateHistoryIds.executeUpdate();
+	}
+
+	public List<RecordAlert> getAlertsBySourceHistoryId(int historyId) throws SQLException {
+
+		List<RecordAlert> result = new ArrayList<RecordAlert>();
+    	psGetAlertsForHistoryId.setLong(1, historyId);
+    	psGetAlertsForHistoryId.execute();
+    	ResultSet rs = psGetAlertsForHistoryId.getResultSet();
+		RecordAlert ra = build(rs);
+		while (ra != null) {
+			result.add(ra);
+			ra = build(rs);
+		}
+    	
+    	return result;
 	}
 
 }

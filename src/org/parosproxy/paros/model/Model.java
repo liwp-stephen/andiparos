@@ -23,6 +23,7 @@ package org.parosproxy.paros.model;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.Database;
 import org.xml.sax.SAXException;
@@ -43,6 +44,10 @@ public class Model {
 	private OptionsParam optionsParam = null;
 	private Database db = null;
 	private String currentDBNameUntitled = "";
+	// ZAP: Added logger
+	private Logger logger = Logger.getLogger(Model.class);
+	
+	
 
 	public Model() {
 		// make sure the variable here will not refer back to model itself.
@@ -94,6 +99,9 @@ public class Model {
 
 		createAndOpenUntitledDb();
 		HistoryReference.setTableHistory(getDb().getTableHistory());
+		// ZAP: Support for multiple tags
+		HistoryReference.setTableTag(getDb().getTableTag());
+		HistoryReference.setTableAlert(getDb().getTableAlert());
 		getOptionsParam().load(Constant.getInstance().FILE_CONFIG);
 	}
 
@@ -160,19 +168,28 @@ public class Model {
 		FileCopier copier = new FileCopier();
 		File fileIn = new File(DBNAME_TEMPLATE + ".data");
 		File fileOut = new File(currentDBNameUntitled + ".data");
-		fileOut.delete();
+		if (fileOut.exists() && ! fileOut.delete()) {
+        	// ZAP: Log failure to delete file
+	    	logger.error("Failed to delete file " + fileOut.getAbsolutePath());
+	    }
 
 		copier.copy(fileIn, fileOut);
 
 		fileIn = new File(DBNAME_TEMPLATE + ".properties");
 		fileOut = new File(currentDBNameUntitled + ".properties");
-		fileOut.delete();
+		if (fileOut.exists() && ! fileOut.delete()) {
+        	// ZAP: Log failure to delete file
+	    	logger.error("Failed to delete file " + fileOut.getAbsolutePath());
+	    }
 
 		copier.copy(fileIn, fileOut);
 
 		fileIn = new File(DBNAME_TEMPLATE + ".script");
 		fileOut = new File(currentDBNameUntitled + ".script");
-		fileOut.delete();
+		if (fileOut.exists() && ! fileOut.delete()) {
+        	// ZAP: Log failure to delete file
+	    	logger.error("Failed to delete file " + fileOut.getAbsolutePath());
+	    }
 		copier.copy(fileIn, fileOut);
 
 		fileIn = new File(currentDBNameUntitled + ".backup");

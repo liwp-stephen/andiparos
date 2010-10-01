@@ -59,7 +59,7 @@ public class OptionsScannerPanel extends AbstractParamPanel {
 	 */
 	private void initialize() {
         this.setLayout(new CardLayout());
-        this.setName("Scanner");
+        this.setName("Active Scan");	// ZAP: Rename
         this.setSize(314, 245);
         this.add(getPanelSpider(), getPanelSpider().getName());
 	}

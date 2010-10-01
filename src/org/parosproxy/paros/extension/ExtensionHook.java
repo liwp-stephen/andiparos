@@ -25,6 +25,7 @@ import java.util.Vector;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.view.SiteMapListener;
 
 /**
  * 
@@ -41,6 +42,9 @@ public class ExtensionHook {
 	private Vector<ProxyListener> proxyListenerList = new Vector<ProxyListener>();
 	private Vector<SessionChangedListener> sessionListenerList = new Vector<SessionChangedListener>();
 	private Vector<AbstractParam> optionsParamSetList = new Vector<AbstractParam>();
+	
+	// ZAP: Added support for site map listeners
+    private Vector<SiteMapListener> siteMapListenerList = new Vector<SiteMapListener>();
 
 	private ViewDelegate view = null;
 	private CommandLineArgument arg[] = new CommandLineArgument[0];
@@ -65,6 +69,10 @@ public class ExtensionHook {
 	public void addSessionListener(SessionChangedListener listener) {
 		sessionListenerList.add(listener);
 	}
+	
+	public void addSiteMapListner(SiteMapListener listener) {
+    	siteMapListenerList.add(listener);
+    }
 
 	public void addCommandLine(CommandLineArgument arg[]) {
 		this.arg = arg;
@@ -116,6 +124,10 @@ public class ExtensionHook {
 		return sessionListenerList;
 	}
 
+	public Vector<SiteMapListener> getSiteMapListenerList() {
+        return siteMapListenerList;
+    }
+	
 	/**
 	 * @return Returns the view.
 	 */

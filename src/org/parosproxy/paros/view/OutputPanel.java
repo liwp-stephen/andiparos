@@ -57,6 +57,7 @@ public class OutputPanel extends AbstractPanel {
 		this.setName("Output");
 		this.setSize(243, 119);
 		// Andiparos: Set output icon
+		//TODO: This is the wrong place
         this.setIcon(new ImageIcon(getClass().getResource("/resource/icons/page_go.png")));
 		this.add(getJScrollPane(), getJScrollPane().getName());
 	}
@@ -115,6 +116,12 @@ public class OutputPanel extends AbstractPanel {
 			});
 		} catch (Exception e) {
 		}
+	}
+	
+	// ZAP: New method for printing out stack traces
+	public void append(final Exception e) {
+		// TODO: convert full stack trace to string
+		this.append(e.toString());
 	}
 
 	public void clear() {

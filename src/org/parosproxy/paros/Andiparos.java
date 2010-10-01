@@ -45,11 +45,6 @@ import org.parosproxy.paros.view.AboutWindow;
 import org.parosproxy.paros.view.LicenseFrame;
 import org.parosproxy.paros.view.View;
 
-/**
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class Andiparos {
 
 	static {

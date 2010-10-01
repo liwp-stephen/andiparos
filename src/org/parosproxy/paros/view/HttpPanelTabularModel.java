@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.log4j.Logger;
+
 /**
  * 
  * To change the template for this generated type comment go to Window -
@@ -39,10 +41,13 @@ public class HttpPanelTabularModel extends AbstractTableModel {
 	private static final long serialVersionUID = -1604566137413866639L;
 	
 	private static final String[] columnNames = { "Parameter Name", "Value" };
-	private static final Pattern pSeparator = Pattern
-			.compile("([^=&]+)[=]([^=&]*)");
+	private static final Pattern pSeparator = Pattern.compile("([^=&]+)[=]([^=&]*)");
 	private Vector<String[]> listPair = new Vector<String[]>();
 	private boolean editable = true;
+	
+	// ZAP: Added logger
+    private Logger logger = Logger.getLogger(HttpPanelTabularModel.class);
+    
 
 	/**
 	 * @return Returns the editable.
@@ -114,7 +119,11 @@ public class HttpPanelTabularModel extends AbstractTableModel {
 				// System.out.println("name:" + name + " value:" + value);
 				listPair.add(cell);
 			} catch (UnsupportedEncodingException e) {
+				// ZAP: Log the exception
+            	logger.error(e.getMessage(), e);
 			} catch (IllegalArgumentException e) {
+				// ZAP: Log the exception
+            	logger.error(e.getMessage(), e);
 			}
 		}
 
@@ -131,7 +140,11 @@ public class HttpPanelTabularModel extends AbstractTableModel {
 				sb.append(URLEncoder.encode(cell[0], "UTF8") + "="
 						+ URLEncoder.encode(cell[1], "UTF8"));
 			} catch (UnsupportedEncodingException e) {
+				// ZAP: Log the exception
+            	logger.error(e.getMessage(), e);
 			} catch (IllegalArgumentException e) {
+				// ZAP: Log the exception
+            	logger.error(e.getMessage(), e);
 			}
 		}
 		return sb.toString();
