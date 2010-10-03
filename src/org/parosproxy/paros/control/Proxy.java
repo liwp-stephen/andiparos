@@ -27,11 +27,6 @@ import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.proxy.ProxyServerSSL;
 import org.parosproxy.paros.model.Model;
 
-/**
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class Proxy {
 
 	// private View view = null;
@@ -54,28 +49,29 @@ public class Proxy {
 
 		// setProxyParam put in here so restart can reread param.
 		proxyServer.setProxyParam(model.getOptionsParam().getProxyParam());
-		proxyServer.setConnectionParam(model.getOptionsParam()
-				.getConnectionParam());
+		proxyServer.setConnectionParam(model.getOptionsParam().getConnectionParam());
 
 		proxyServerSSL.setProxyParam(model.getOptionsParam().getProxyParam());
-		proxyServerSSL.setConnectionParam(model.getOptionsParam()
-				.getConnectionParam());
+		proxyServerSSL.setConnectionParam(model.getOptionsParam().getConnectionParam());
 
 		if (model.getOptionsParam().getProxyParam().isUseReverseProxy()) {
 
-			proxyServerSSL.startServer(model.getOptionsParam().getProxyParam()
-					.getReverseProxyIp(), model.getOptionsParam()
-					.getProxyParam().getReverseProxyHttpsPort(), false);
+			proxyServerSSL.startServer(
+					model.getOptionsParam().getProxyParam().getReverseProxyIp(),
+					model.getOptionsParam().getProxyParam().getReverseProxyHttpsPort(),
+					false);
 
-			proxyServer.startServer(model.getOptionsParam().getProxyParam()
-					.getReverseProxyIp(), model.getOptionsParam()
-					.getProxyParam().getReverseProxyHttpPort(), false);
+			proxyServer.startServer(
+					model.getOptionsParam().getProxyParam().getReverseProxyIp(),
+					model.getOptionsParam().getProxyParam().getReverseProxyHttpPort(),
+					false);
 
 		} else {
 
-			proxyServer.startServer(model.getOptionsParam().getProxyParam()
-					.getProxyIp(), model.getOptionsParam().getProxyParam()
-					.getProxyPort(), false);
+			proxyServer.startServer(
+					model.getOptionsParam().getProxyParam().getProxyIp(),
+					model.getOptionsParam().getProxyParam().getProxyPort(),
+					false);
 
 		}
 	}

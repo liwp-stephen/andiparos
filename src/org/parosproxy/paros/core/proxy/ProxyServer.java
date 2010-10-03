@@ -22,6 +22,7 @@
 package org.parosproxy.paros.core.proxy;
  
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -29,7 +30,9 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Logger;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpUtil;
 import org.parosproxy.paros.view.View;
@@ -48,7 +51,8 @@ public class ProxyServer implements Runnable {
     protected boolean enableCacheProcessing = false;
     protected Vector<CacheProcessingItem> cacheProcessingList = new Vector<CacheProcessingItem>();
     
-	
+    private Logger logger = Logger.getLogger(getClass().getName());
+    
     /**
      * @return Returns the enableCacheProcessing.
      */
@@ -110,24 +114,30 @@ public class ProxyServer implements Runnable {
    	    proxySocket = null;
    	    for (int i=0; i<20 && proxySocket == null; i++) {
    	        try {
-   	            
+   	        	
    	            proxySocket = createServerSocket(ip, port);
    	            proxySocket.setSoTimeout(PORT_TIME_OUT);
-   	            isProxyRunning = true;
+	            isProxyRunning = true;
    	            
-   	        } catch (Exception e) {
+   	        } catch (BindException be) {
    	            if (!isDynamicPort) {
    	            	// ZAP: Warn the user if we cant listen on the static port
-   	            	View.getSingleton().showWarningDialog("Cannot listen on port " + port);
-   	            	
-   	                e.printStackTrace();
+   	            	View.getSingleton().showWarningDialog("Cannot listen on port " + port + ".\nPlease choose another one.");	
+   	            	//Andiparos: Catch exception
+   	   				logger.severe("Error initialising server socket on given port: " + be.getMessage());
    	                return -1;
    	            } else {
    	                if (port < 65535) {
    	                    port++;
    	                }
    	            }
-   	        }
+   	        } catch (UnknownHostException uhe) {
+   				//Andiparos: Catch exception
+   				logger.severe("Error determining IP address of host: " + uhe.getMessage());
+   			} catch (IOException ioe) {
+   				//Andiparos: Catch exception
+   				logger.severe("I/O Error: " + ioe.getMessage());
+   			}
    	        
    	    }
 
@@ -189,7 +199,7 @@ public class ProxyServer implements Runnable {
 
 	}
 
-	protected ServerSocket createServerSocket(String ip, int port) throws UnknownHostException, IOException {
+	protected ServerSocket createServerSocket(String ip, int port) throws UnknownHostException, IOException, BindException {
 		ServerSocket socket = new ServerSocket(port, 400, InetAddress.getByName(ip));
 		return socket;
 	}
