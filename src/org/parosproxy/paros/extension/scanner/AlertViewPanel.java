@@ -508,8 +508,7 @@ public class AlertViewPanel extends AbstractPanel {
 			alert.setAlertId(originalAlert.getAlertId());
 			alert.setAlert((String)alertEditName.getSelectedItem());
 			alert.setParam((String)alertEditParam.getSelectedItem());
-			alert.setRiskReliability(alertEditRisk.getSelectedIndex(), 
-					alertEditReliability.getSelectedIndex());
+			alert.setRiskReliability(alertEditRisk.getSelectedIndex(), alertEditReliability.getSelectedIndex());
 			alert.setDescription(alertDescription.getText());
 			alert.setOtherInfo(alertOtherInfo.getText());
 			alert.setSolution(alertSolution.getText());

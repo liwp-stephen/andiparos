@@ -194,6 +194,7 @@ public class View implements ViewDelegate {
     public void addMainToolbarSeparator () {
     	this.getMainFrame().getMainToolbarPanel().addSeparator();
     }
+    
 	public void addMainToolbarButton(JToggleButton button) {
     	this.getMainFrame().getMainToolbarPanel().addButton(button);
 	}

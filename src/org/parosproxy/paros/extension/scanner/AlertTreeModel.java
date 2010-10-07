@@ -54,10 +54,10 @@ class AlertTreeModel extends DefaultTreeModel {
     	totalMedium = 0;
     	totalHigh = 0;
 
-        View.getSingleton().getMainFrame().setAlertHigh(0);
-        View.getSingleton().getMainFrame().setAlertMedium(0);
-        View.getSingleton().getMainFrame().setAlertLow(0);
-        View.getSingleton().getMainFrame().setAlertInfo(0);
+        View.getSingleton().getMainFrame().getMainFooterPanel().setAlertHigh(0);
+        View.getSingleton().getMainFrame().getMainFooterPanel().setAlertMedium(0);
+        View.getSingleton().getMainFrame().getMainFooterPanel().setAlertLow(0);
+        View.getSingleton().getMainFrame().getMainFooterPanel().setAlertInfo(0);
 
     	AlertNode parent = (AlertNode) getRoot();
     	if (parent != null) {
@@ -70,27 +70,22 @@ class AlertTreeModel extends DefaultTreeModel {
     	// Note that the number comments are to ensure the right ordering in the tree :)
 		URL url = null;
     	if (alert.getReliability() == Alert.FALSE_POSITIVE) {
-    		url = getClass().getResource("/resource/icon/16/072.png");
-    		return "<html><!--5--><img src=\"" + url + "\">&nbsp;" +
-    			alert.getAlert() + "<html>"; // 'Green flag' icon
+    		url = getClass().getResource("/resource/icons/flag_green.png");
+    		return "<html><!--5--><img src=\"" + url + "\">&nbsp;" + alert.getAlert() + "<html>"; // 'Green flag' icon
     	}
     	switch (alert.getRisk()) {
     	case Alert.RISK_INFO:
-    		url = getClass().getResource("/resource/icon/16/073.png");
-    		return "<html><!--4--><img src=\"" + url + "\">&nbsp;" +
-    			alert.getAlert() + "<html>"; // 'Blue flag' icon
+    		url = getClass().getResource("/resource/icons/flag_blue.png");
+    		return "<html><!--4--><img src=\"" + url + "\">&nbsp;" + alert.getAlert() + "<html>"; // 'Blue flag' icon
     	case Alert.RISK_LOW:
-    		url = getClass().getResource("/resource/icon/16/074.png");
-    		return "<html><!--3--><img src=\"" + url + "\">&nbsp;" +
-    			alert.getAlert() + "<html>"; // 'Yellow flag' icon
+    		url = getClass().getResource("/resource/icons/flag_yellow.png");
+    		return "<html><!--3--><img src=\"" + url + "\">&nbsp;" + alert.getAlert() + "<html>"; // 'Yellow flag' icon
     	case Alert.RISK_MEDIUM:
-    		url = getClass().getResource("/resource/icon/16/076.png");
-    		return "<html><!--2--><img src=\"" + url + "\">&nbsp;" +
-    			alert.getAlert() + "<html>"; // 'Orange flag' icon
+    		url = getClass().getResource("/resource/icons/flag_orange.png");
+    		return "<html><!--2--><img src=\"" + url + "\">&nbsp;" + alert.getAlert() + "<html>"; // 'Orange flag' icon
     	case Alert.RISK_HIGH:
-    		url = getClass().getResource("/resource/icon/16/071.png");
-    		return "<html><!--1--><img src=\"" + url + "\">&nbsp;" +
-    			alert.getAlert() + "<html>"; // 'Red flag' icon
+    		url = getClass().getResource("/resource/icons/flag_red.png");
+    		return "<html><!--1--><img src=\"" + url + "\">&nbsp;" + alert.getAlert() + "<html>"; // 'Red flag' icon
         default:
         	return alert.getAlert();
     	}
@@ -102,16 +97,16 @@ class AlertTreeModel extends DefaultTreeModel {
     	}
     	switch (alert.getRisk()) {
     	case Alert.RISK_INFO:
-            View.getSingleton().getMainFrame().setAlertInfo(++totalInfo);
+            View.getSingleton().getMainFrame().getMainFooterPanel().setAlertInfo(++totalInfo);
             break;
     	case Alert.RISK_LOW:
-            View.getSingleton().getMainFrame().setAlertLow(++totalLow);
+            View.getSingleton().getMainFrame().getMainFooterPanel().setAlertLow(++totalLow);
             break;
     	case Alert.RISK_MEDIUM:
-            View.getSingleton().getMainFrame().setAlertMedium(++totalMedium);
+            View.getSingleton().getMainFrame().getMainFooterPanel().setAlertMedium(++totalMedium);
             break;
     	case Alert.RISK_HIGH:
-            View.getSingleton().getMainFrame().setAlertHigh(++totalHigh);
+            View.getSingleton().getMainFrame().getMainFooterPanel().setAlertHigh(++totalHigh);
             break;
     	}
     }
@@ -122,16 +117,16 @@ class AlertTreeModel extends DefaultTreeModel {
     	}
     	switch (alert.getRisk()) {
     	case Alert.RISK_INFO:
-            View.getSingleton().getMainFrame().setAlertInfo(--totalInfo);
+            View.getSingleton().getMainFrame().getMainFooterPanel().setAlertInfo(--totalInfo);
             break;
     	case Alert.RISK_LOW:
-            View.getSingleton().getMainFrame().setAlertLow(--totalLow);
+            View.getSingleton().getMainFrame().getMainFooterPanel().setAlertLow(--totalLow);
             break;
     	case Alert.RISK_MEDIUM:
-            View.getSingleton().getMainFrame().setAlertMedium(--totalMedium);
+            View.getSingleton().getMainFrame().getMainFooterPanel().setAlertMedium(--totalMedium);
             break;
     	case Alert.RISK_HIGH:
-            View.getSingleton().getMainFrame().setAlertHigh(--totalHigh);
+            View.getSingleton().getMainFrame().getMainFooterPanel().setAlertHigh(--totalHigh);
             break;
     	}
     }
