@@ -187,7 +187,6 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 		txtReason.setFont(new Font("Default", Font.PLAIN, 12));
 		txtReason.setOpaque(true);
 		txtReason.setVisible(true);
-		txtStatus = new JLabel();
 		
 		
 		GridBagConstraints gbc_txtRTT = new GridBagConstraints();

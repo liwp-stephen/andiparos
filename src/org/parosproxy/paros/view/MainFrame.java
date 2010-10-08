@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.MainToolbarPanel;
 
 
@@ -91,7 +92,10 @@ public class MainFrame extends AbstractFrame {
 			paneContent.setPreferredSize(new Dimension(800, 600));
 			paneContent.setFont(new Font("Dialog", Font.PLAIN, 12));
 			// ZAP: Add MainToolbar
-			paneContent.add(getMainToolbarPanel(), null);
+			if(!Constant.isOSX()) {
+				// Toolbar will only be displayed when not using OSX
+				paneContent.add(getMainToolbarPanel(), null);
+			}
 			
 			paneContent.add(getPaneDisplay(), null);
 			// ZAP: Remove the status line - its not really used and takes up space
