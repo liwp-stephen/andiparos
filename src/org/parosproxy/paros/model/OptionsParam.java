@@ -30,6 +30,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.extension.option.OptionsParamCertificate;
+import org.parosproxy.paros.extension.option.OptionsParamFonts;
 import org.parosproxy.paros.extension.option.OptionsParamHttpHeader;
 import org.parosproxy.paros.extension.option.OptionsParamView;
 import org.parosproxy.paros.network.ConnectionParam;
@@ -41,18 +42,34 @@ public class OptionsParam extends AbstractParam {
 	private OptionsParamView viewParam = new OptionsParamView();
 	private OptionsParamHttpHeader httpHeaderParam = new OptionsParamHttpHeader();
 	private OptionsParamCertificate certificateParam = new OptionsParamCertificate();
+	// Andiparos: Dynamically resize fonts
+	private OptionsParamFonts fontsParam = new OptionsParamFonts();
 
 	private Vector<AbstractParam> paramSetList = new Vector<AbstractParam>();
 	private XMLConfiguration config = null;
 	private boolean gui = true;
 	private File userDirectory = null;
 
+	
+	public OptionsParam() {
+
+	}
+	
 	/**
 	 * @return Returns the connectionParam.
 	 */
 	public ConnectionParam getConnectionParam() {
 		return connectionParam;
 	}
+	
+	/**
+	 * @param connectionParam
+	 *            The connectionParam to set.
+	 */
+	public void setConnectionParam(ConnectionParam connectionParam) {
+		this.connectionParam = connectionParam;
+	}
+	
 
 	/**
 	 * @return Returns the proxyParam.
@@ -68,17 +85,13 @@ public class OptionsParam extends AbstractParam {
 	public void setProxyParam(ProxyParam proxyParam) {
 		this.proxyParam = proxyParam;
 	}
-
-	public OptionsParam() {
-
-	}
-
+	
+	
 	/**
-	 * @param connectionParam
-	 *            The connectionParam to set.
+	 * @return Returns the viewParam.
 	 */
-	public void setConnectionParam(ConnectionParam connectionParam) {
-		this.connectionParam = connectionParam;
+	public OptionsParamView getViewParam() {
+		return viewParam;
 	}
 
 	/**
@@ -89,6 +102,14 @@ public class OptionsParam extends AbstractParam {
 		this.viewParam = viewParam;
 	}
 	
+	
+	/**
+	 * @return Returns the httpHeaderParam.
+	 */
+	public OptionsParamHttpHeader getHttpHeaderParam() {
+		return httpHeaderParam;
+	}
+	
 	/**
 	 * @param httpHeaderParam
 	 *            The httpHeaderParam to set.
@@ -97,20 +118,14 @@ public class OptionsParam extends AbstractParam {
 		this.httpHeaderParam = httpHeaderParam;
 	}
 
-	/**
-	 * @return Returns the viewParam.
-	 */
-	public OptionsParamView getViewParam() {
-		return viewParam;
-	}
 	
 	/**
-	 * @return Returns the httpHeaderParam.
+	 * @return Returns the certificateParam.
 	 */
-	public OptionsParamHttpHeader getHttpHeaderParam() {
-		return httpHeaderParam;
+	public OptionsParamCertificate getCertificateParam() {
+		return certificateParam;
 	}
-
+	
 	/**
 	 * @param certificateParam
 	 *            The certificateParam to set.
@@ -118,14 +133,41 @@ public class OptionsParam extends AbstractParam {
 	public void setCertificateParam(OptionsParamCertificate certificateParam) {
 		this.certificateParam = certificateParam;
 	}
+	
+	// Andiparos: Dynamically resize fonts
+	/**
+	 * @return Returns the fontsParam.
+	 */
+	public OptionsParamFonts getFontsParam() {
+		return fontsParam;
+	}
+	
+	/**
+	 * @param fontsParam
+	 *            The fontsParam to set.
+	 */
+	public void setFontsParam(OptionsParamFonts fontsParam) {
+		this.fontsParam = fontsParam;
+	}
+	
+	
 
 	/**
-	 * @return Returns the certificateParam.
+	 * @return Returns the currentFolder.
 	 */
-	public OptionsParamCertificate getCertificateParam() {
-		return certificateParam;
+	public File getUserDirectory() {
+		return userDirectory;
 	}
 
+	/**
+	 * @param currentFolder
+	 *            The currentFolder to set.
+	 */
+	public void setUserDirectory(File currentDirectory) {
+		this.userDirectory = currentDirectory;
+	}
+	
+	
 	public void addParamSet(AbstractParam paramSet) {
 		paramSetList.add(paramSet);
 		paramSet.load(getConfig());
@@ -167,6 +209,7 @@ public class OptionsParam extends AbstractParam {
 		getCertificateParam().load(getConfig());
 		getViewParam().load(getConfig());
 		getHttpHeaderParam().load(getConfig());
+		getFontsParam().load(getConfig());
 	}
 
 	public boolean isGUI() {
@@ -177,19 +220,6 @@ public class OptionsParam extends AbstractParam {
 		this.gui = gui;
 	}
 
-	/**
-	 * @return Returns the currentFolder.
-	 */
-	public File getUserDirectory() {
-		return userDirectory;
-	}
-
-	/**
-	 * @param currentFolder
-	 *            The currentFolder to set.
-	 */
-	public void setUserDirectory(File currentDirectory) {
-		this.userDirectory = currentDirectory;
-	}
+	
 
 }
