@@ -34,7 +34,16 @@
 			<httpResponseToSitemapNo200Ok>0</httpResponseToSitemapNo200Ok>
 			<httpResponseHide404NotFound>0</httpResponseHide404NotFound>
 		</sitemap>
-		<fontSize>10</fontSize>
+		<font>
+			<base>
+				<name>Lucida Grande</name>
+				<size>12</size>
+			</base>
+			<code>
+				<name>Courier New</name>
+				<size>12</size>
+			</code>
+		</font>
 	</view>
 	
 	<start>

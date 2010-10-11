@@ -22,13 +22,12 @@ package org.parosproxy.paros.extension.history;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Dimension;
-import java.awt.SystemColor;
-import java.awt.Font;
 import java.awt.Insets;
-import java.awt.Cursor;
+import java.awt.SystemColor;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,6 +43,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.utils.FontHelper;
 
 public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 
@@ -107,7 +107,7 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 		txtId.setHorizontalAlignment(SwingConstants.CENTER);
 		txtId.setPreferredSize(new Dimension(40, 16));
 		txtId.setMinimumSize(new Dimension(40, 16));
-		txtId.setFont(new Font("Default", Font.PLAIN, 12));
+		txtId.setFont(FontHelper.getBaseFont());
 		txtId.setOpaque(true);
 		
 		
@@ -127,7 +127,7 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 		txtMethod.setHorizontalAlignment(SwingConstants.LEFT);
 		txtMethod.setPreferredSize(new Dimension(45, 16));
 		txtMethod.setMinimumSize(new Dimension(45, 16));
-		txtMethod.setFont(new Font("Default", Font.PLAIN, 12));
+		txtMethod.setFont(FontHelper.getBaseFont());
 		txtMethod.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		txtMethod.setOpaque(true);
 		
@@ -148,7 +148,7 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 		txtURI.setHorizontalAlignment(SwingConstants.LEFT);
 		txtURI.setPreferredSize(new Dimension(420, 16));
 		txtURI.setMinimumSize(new Dimension(420, 16));
-		txtURI.setFont(new Font("Default", Font.PLAIN, 12));
+		txtURI.setFont(FontHelper.getBaseFont());
 		txtURI.setOpaque(true);
 		
 		
@@ -166,7 +166,7 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 		txtStatus.setHorizontalAlignment(SwingConstants.CENTER);
 		txtStatus.setPreferredSize(new Dimension(30, 16));
 		txtStatus.setMinimumSize(new Dimension(30, 16));
-		txtStatus.setFont(new Font("Default", Font.PLAIN, 12));
+		txtStatus.setFont(FontHelper.getBaseFont());
 		txtStatus.setOpaque(true);
 
 		
@@ -184,7 +184,7 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 		txtReason.setHorizontalAlignment(SwingConstants.LEFT);
 		txtReason.setPreferredSize(new Dimension(85, 16));
 		txtReason.setMinimumSize(new Dimension(85, 16));
-		txtReason.setFont(new Font("Default", Font.PLAIN, 12));
+		txtReason.setFont(FontHelper.getBaseFont());
 		txtReason.setOpaque(true);
 		txtReason.setVisible(true);
 		
@@ -203,7 +203,7 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 		txtRTT.setHorizontalAlignment(SwingConstants.RIGHT);
 		txtRTT.setPreferredSize(new Dimension(55, 16));
 		txtRTT.setMinimumSize(new Dimension(55, 16));
-		txtRTT.setFont(new Font("Default", Font.PLAIN, 12));
+		txtRTT.setFont(FontHelper.getBaseFont());
 		txtRTT.setOpaque(true);
 		
 		
@@ -222,7 +222,7 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 		txtTimestamp.setHorizontalAlignment(SwingConstants.RIGHT);
 		txtTimestamp.setPreferredSize(new Dimension(40, 16));
 		txtTimestamp.setMinimumSize(new Dimension(40, 16));
-		txtTimestamp.setFont(new Font("Default", Font.PLAIN, 12));
+		txtTimestamp.setFont(FontHelper.getBaseFont());
 		txtTimestamp.setOpaque(true);
 		
 		
@@ -241,7 +241,7 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
 		txtTag.setHorizontalAlignment(SwingConstants.LEFT);
 		txtTag.setPreferredSize(new Dimension(70, 16));
 		txtTag.setMinimumSize(new Dimension(70, 16));
-		txtTag.setFont(new Font("Default", Font.PLAIN, 12));
+		txtTag.setFont(FontHelper.getBaseFont());
 		txtTag.setOpaque(true);
 		
 		
@@ -263,13 +263,13 @@ public class LogPanelCellRenderer extends JPanel implements ListCellRenderer {
         txtNote.setHorizontalAlignment(SwingConstants.CENTER);
         txtNote.setPreferredSize(new Dimension(20 ,16));
         txtNote.setMinimumSize(new Dimension(20 ,16));
-        txtNote.setFont(new Font("Default", Font.PLAIN, 12));
+        txtNote.setFont(FontHelper.getBaseFont());
         txtNote.setOpaque(true);
         
 
 		this.setLayout(new GridBagLayout());
 		this.setSize(328, 11);
-		this.setFont(new Font("Default", Font.PLAIN, 12));
+		this.setFont(FontHelper.getBaseFont());
 		this.add(txtFlag, gbc_txtFlag);
 		this.add(txtId, gbc_txtId);
 		this.add(txtMethod, gbc_txtMethod);

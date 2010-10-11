@@ -21,21 +21,21 @@
 package org.parosproxy.paros.extension.patternsearch;
 
 import java.awt.Choice;
-import java.awt.Frame;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Insets;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.InputEvent;
-import java.awt.event.ActionListener;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.Color;
-import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -47,6 +47,7 @@ import javax.swing.border.TitledBorder;
 
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.extension.ViewDelegate;
+import org.parosproxy.paros.utils.FontHelper;
 
 /**
  * 
@@ -270,7 +271,7 @@ public class SearchDialog extends AbstractDialog {
 		if (txtPattern == null) {
 			txtPattern = new JTextArea();
 			txtPattern.setLineWrap(true);
-			txtPattern.setFont(new Font("Courier New", Font.PLAIN, 12));
+			txtPattern.setFont(FontHelper.getCodeFont());
 			txtPattern.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent e) {
 					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
@@ -293,7 +294,7 @@ public class SearchDialog extends AbstractDialog {
 		if (txtResult == null) {
 			txtResult = new JTextArea();
 			txtResult.setLineWrap(true);
-			txtResult.setFont(new Font("Courier New", Font.PLAIN, 12));
+			txtResult.setFont(FontHelper.getCodeFont());
 		}
 		return txtResult;
 	}

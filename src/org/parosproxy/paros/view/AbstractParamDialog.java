@@ -53,6 +53,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import org.parosproxy.paros.extension.AbstractDialog;
+import org.parosproxy.paros.utils.FontHelper;
 
 
 public class AbstractParamDialog extends AbstractDialog {
@@ -102,7 +103,7 @@ public class AbstractParamDialog extends AbstractDialog {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setFont(new Font("Dialog", Font.PLAIN, 12));
+		this.setFont(FontHelper.getBaseFont());
 		this.setSize(500, 375);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setContentPane(getJContentPane());

@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-
 import org.parosproxy.paros.Constant;
 
 

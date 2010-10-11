@@ -21,14 +21,15 @@
 package org.parosproxy.paros.view;
 
 import java.awt.CardLayout;
-import java.awt.Dimension;
 import java.awt.Cursor;
-import javax.swing.JSplitPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+
 import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 
 
 /**

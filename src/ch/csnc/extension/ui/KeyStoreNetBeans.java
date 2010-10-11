@@ -19,6 +19,14 @@
 
 package ch.csnc.extension.ui;
 
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -36,13 +44,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.Insets;
-import java.awt.Component;
-import java.awt.EventQueue;
 
 public class KeyStoreNetBeans extends JDialog {
     

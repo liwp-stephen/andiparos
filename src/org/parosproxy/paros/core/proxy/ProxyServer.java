@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.NullArgumentException;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpUtil;
 import org.parosproxy.paros.view.View;

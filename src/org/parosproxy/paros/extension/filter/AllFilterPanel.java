@@ -20,19 +20,19 @@
  */
 package org.parosproxy.paros.extension.filter;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.TableColumn;
-import javax.swing.BorderFactory;
 import javax.swing.border.EtchedBorder;
+import javax.swing.table.TableColumn;
 
 import org.parosproxy.paros.view.AbstractParamPanel;
 

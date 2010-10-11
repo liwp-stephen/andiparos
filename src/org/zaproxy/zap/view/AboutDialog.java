@@ -20,16 +20,14 @@
 package org.zaproxy.zap.view;
 
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 
-
-import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JPanel;
 
 import org.parosproxy.paros.extension.AbstractDialog;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 /**
  *
  * To change the template for this generated type comment go to

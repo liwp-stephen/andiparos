@@ -19,7 +19,6 @@
 package org.parosproxy.paros.view;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -30,6 +29,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+
+import org.parosproxy.paros.utils.FontHelper;
 
 public class MainFooterPanel extends JPanel {
 
@@ -98,7 +99,7 @@ public class MainFooterPanel extends JPanel {
 			footerToolbar.setEnabled(true);
 			footerToolbar.setFloatable(false);
 			footerToolbar.setRollover(true);
-			footerToolbar.setFont(new Font("Dialog", Font.PLAIN, 12));
+			footerToolbar.setFont(FontHelper.getBaseFont());
 			footerToolbar.setName("Footer Toolbar");
 			footerToolbar.setBorder(BorderFactory.createEmptyBorder());
 		}

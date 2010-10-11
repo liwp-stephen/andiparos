@@ -29,7 +29,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.model.OptionsParam;

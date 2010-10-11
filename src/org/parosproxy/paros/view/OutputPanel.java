@@ -22,16 +22,17 @@ package org.parosproxy.paros.view;
 
 import java.awt.CardLayout;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.utils.FontHelper;
 
 
 public class OutputPanel extends AbstractPanel {
@@ -88,7 +89,7 @@ public class OutputPanel extends AbstractPanel {
 			txtOutput = new JTextArea();
 			txtOutput.setEditable(false);
 			txtOutput.setLineWrap(true);
-			txtOutput.setFont(new Font("Dialog", Font.PLAIN, 12));
+			txtOutput.setFont(FontHelper.getBaseFont());
 			txtOutput.setName("");
 			txtOutput.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent e) {

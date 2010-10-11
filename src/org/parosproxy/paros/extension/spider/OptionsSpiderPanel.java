@@ -21,12 +21,13 @@
 package org.parosproxy.paros.extension.spider;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Dimension;
-import java.awt.Font;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -37,7 +38,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.spider.SpiderParam;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import javax.swing.JCheckBox;
 
 /**
  * 

@@ -22,7 +22,6 @@ package org.parosproxy.paros.view;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,6 +35,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.utils.FontHelper;
 
 import bsh.util.JConsole;
 
@@ -124,7 +124,7 @@ public class BeanShellPanel extends AbstractPanel {
 		if (txtEditor == null) {
 			txtEditor = new JTextArea();
 			txtEditor.setLineWrap(false);
-			txtEditor.setFont(new Font("Default", Font.PLAIN, 12));
+			txtEditor.setFont(FontHelper.getBaseFont());
 			txtEditor.setName("");
 			txtEditor.setTabSize(4);
 			txtEditor.setVisible(true);

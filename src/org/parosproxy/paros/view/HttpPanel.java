@@ -23,7 +23,6 @@ package org.parosproxy.paros.view;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -34,6 +33,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -42,19 +42,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-
-import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.utils.FontHelper;
 
 /**
  * 
@@ -189,7 +188,7 @@ public class HttpPanel extends AbstractPanel {
 		if (txtHeader == null) {
 			txtHeader = new JTextArea();
 			txtHeader.setLineWrap(true);
-			txtHeader.setFont(new Font("Default", Font.PLAIN, 12));
+			txtHeader.setFont(FontHelper.getBaseFont());
 			txtHeader.setName("");
 			txtHeader.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent e) {
@@ -250,7 +249,7 @@ public class HttpPanel extends AbstractPanel {
 		if (txtBody == null) {
 			txtBody = new JTextArea();
 			txtBody.setLineWrap(true);
-			txtBody.setFont(new Font("Default", Font.PLAIN, 12));
+			txtBody.setFont(FontHelper.getBaseFont());
 			txtBody.setName("");
 			txtBody.setTabSize(4);
 			txtBody.setVisible(true);

@@ -20,15 +20,15 @@
  */
 package org.parosproxy.paros.extension.option;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
-import java.awt.Dimension;
-import java.awt.Insets;
 
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.ConnectionParam;

@@ -21,11 +21,10 @@
 package org.parosproxy.paros.extension.spider;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JTree;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenu;

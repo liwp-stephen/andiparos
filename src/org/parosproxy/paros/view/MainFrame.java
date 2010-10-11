@@ -24,7 +24,6 @@ package org.parosproxy.paros.view;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -34,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.utils.FontHelper;
 import org.zaproxy.zap.view.MainToolbarPanel;
 
 
@@ -90,7 +90,7 @@ public class MainFrame extends AbstractFrame {
 			paneContent.setLayout(new BoxLayout(getPaneContent(), BoxLayout.Y_AXIS));
 			paneContent.setEnabled(true);
 			paneContent.setPreferredSize(new Dimension(800, 600));
-			paneContent.setFont(new Font("Dialog", Font.PLAIN, 12));
+			paneContent.setFont(FontHelper.getBaseFont());
 			// ZAP: Add MainToolbar
 			if(!Constant.isOSX()) {
 				// Toolbar will only be displayed when not using OSX

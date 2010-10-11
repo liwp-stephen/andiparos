@@ -21,7 +21,6 @@
 package org.parosproxy.paros.core.scanner.plugin;
 
 import org.apache.commons.httpclient.URI;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;

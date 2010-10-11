@@ -24,7 +24,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -35,6 +34,7 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.utils.FontHelper;
 
 /**
  * Abstract base class for all dialog box.
@@ -70,7 +70,7 @@ public abstract class AbstractDialog extends JDialog {
 	 */
 	private void initialize() {
 		this.setVisible(false);
-		this.setFont(new Font("Dialog", Font.PLAIN, 12));
+		this.setFont(FontHelper.getBaseFont());
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setSize(300, 200);
 		this.setTitle(Constant.PROGRAM_NAME);

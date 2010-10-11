@@ -20,21 +20,20 @@
  */
 package org.parosproxy.paros.extension.manualrequest;
 
-import javax.swing.JMenuItem;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JMenuItem;
+
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.extension.history.ManualRequestEditorDialog;
 import org.parosproxy.paros.model.HistoryList;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.model.HistoryList;
 
 
 public class ExtensionManualRequestEditor extends ExtensionAdaptor {

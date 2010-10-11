@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.ExtensionPopupMenu;
 import org.parosproxy.paros.extension.ViewDelegate;
 
 /**

@@ -37,6 +37,7 @@ import javax.swing.border.TitledBorder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.extension.encoder.Encoder;
+import org.parosproxy.paros.utils.FontHelper;
 /**
  *
  * To change the template for this generated type comment go to
@@ -207,7 +208,7 @@ public class EncodeDecodeDialog extends AbstractDialog {
 	private JTextArea newField(Boolean editable) {
 		JTextArea field = new JTextArea();
 		field.setLineWrap(true);
-		field.setFont(new java.awt.Font("Courier New", java.awt.Font.PLAIN, 12));
+		field.setFont(FontHelper.getCodeFont());
 		field.setBorder(BorderFactory.createEtchedBorder());
 		field.setEditable(editable);
 		return field;

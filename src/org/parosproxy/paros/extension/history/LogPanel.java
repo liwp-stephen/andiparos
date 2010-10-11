@@ -20,45 +20,37 @@
 package org.parosproxy.paros.extension.history;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.Font;
-import java.awt.Dimension;
-import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.Vector;
 
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JList;
-import javax.swing.JTextField;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
-import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.utils.FontHelper;
 import org.parosproxy.paros.view.HttpPanel;
 import org.parosproxy.paros.view.View;
 
@@ -243,7 +235,7 @@ public class LogPanel extends AbstractPanel implements Runnable {
 			listLog.setCellRenderer(getLogPanelCellRenderer());
 			listLog.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 			listLog.setName("ListLog");
-			listLog.setFont(new Font("Default", Font.PLAIN, 12));
+			listLog.setFont(FontHelper.getBaseFont());
 			listLog.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent e) {
 					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
@@ -429,7 +421,7 @@ public class LogPanel extends AbstractPanel implements Runnable {
 			logPanelCellRenderer = new LogPanelCellRenderer();
 			logPanelCellRenderer.setSize(new Dimension(328, 21));
 			logPanelCellRenderer.setBackground(Color.white);
-			logPanelCellRenderer.setFont(new Font("MS Sans Serif", Font.PLAIN, 12));
+			logPanelCellRenderer.setFont(FontHelper.getBaseFont());
 		}
 		return logPanelCellRenderer;
 	}

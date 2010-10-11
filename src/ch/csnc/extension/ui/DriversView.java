@@ -19,18 +19,18 @@
 package ch.csnc.extension.ui;
 
 import java.awt.Component;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
-import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import ch.csnc.extension.util.DriverConfiguration;

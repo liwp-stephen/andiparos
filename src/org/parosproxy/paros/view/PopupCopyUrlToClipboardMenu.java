@@ -21,16 +21,13 @@ package org.parosproxy.paros.view;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
-import java.sql.SQLException;
 
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
 import org.parosproxy.paros.extension.ExtensionPopupMenu;
-import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**

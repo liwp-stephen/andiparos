@@ -20,7 +20,6 @@
  */
 package org.parosproxy.paros.view;
 
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

@@ -20,36 +20,34 @@
  */
 package org.parosproxy.paros.extension.spider;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
-import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
-
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
-
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 /**
  *
  * To change the template for this generated type comment go to

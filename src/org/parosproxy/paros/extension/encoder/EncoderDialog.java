@@ -18,16 +18,19 @@
 
 package org.parosproxy.paros.extension.encoder;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.InputEvent;
-import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.Font;
-import java.awt.Color;
-import javax.swing.border.TitledBorder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.security.NoSuchAlgorithmException;
 
 import javax.swing.BorderFactory;
@@ -38,14 +41,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
+import javax.swing.border.TitledBorder;
 
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.extension.ViewDelegate;
+import org.parosproxy.paros.utils.FontHelper;
 
 
 public class EncoderDialog extends AbstractDialog {
@@ -227,7 +227,7 @@ public class EncoderDialog extends AbstractDialog {
 		if (txtEncode == null) {
 			txtEncode = new JTextArea();
 			txtEncode.setLineWrap(true);
-			txtEncode.setFont(new Font("Courier New", Font.PLAIN, 12));
+			txtEncode.setFont(FontHelper.getCodeFont());
 			txtEncode.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent e) {
 					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
@@ -247,7 +247,7 @@ public class EncoderDialog extends AbstractDialog {
 		if (txtDecode == null) {
 			txtDecode = new JTextArea();
 			txtDecode.setLineWrap(true);
-			txtDecode.setFont(new Font("Courier New", Font.PLAIN, 12));
+			txtDecode.setFont(FontHelper.getCodeFont());
 		}
 		return txtDecode;
 	}

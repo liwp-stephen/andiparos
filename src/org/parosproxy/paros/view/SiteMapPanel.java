@@ -21,21 +21,21 @@
 package org.parosproxy.paros.view;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -28,17 +28,15 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.WindowConstants;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
 
 import org.parosproxy.paros.core.scanner.HostProcess;
 import org.parosproxy.paros.extension.AbstractDialog;

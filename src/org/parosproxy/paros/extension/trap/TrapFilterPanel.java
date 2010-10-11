@@ -20,22 +20,21 @@
  */
 package org.parosproxy.paros.extension.trap;
 
-import org.parosproxy.paros.extension.AbstractPanel;
-
-import javax.swing.JPanel;
-import javax.swing.JCheckBox;
-
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JTextArea;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import org.parosproxy.paros.extension.AbstractPanel;
 /**
  *
  * To change the template for this generated type comment go to
