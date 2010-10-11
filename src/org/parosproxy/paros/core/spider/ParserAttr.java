@@ -34,8 +34,7 @@ class ParserAttr {
 		// 2. bounded by spaces if double quote not exist
 		// String pattern = "(?i)\\s*?" + attr.toUpperCase() +
 		// "\\s*?=\\s*(\"*)([^\"]*)\\1(?:\\Z|\\s+)";
-		String attrPattern = "\\s*?" + attr.toUpperCase()
-				+ "\\s*?=\\s*([\"']{0,1})([^\"']*?)\\1(\\Z|\\s+)";
+		String attrPattern = "\\s*?" + attr.toUpperCase() + "\\s*?=\\s*([\"']{0,1})([^\"']*?)\\1(\\Z|\\s+)";
 
 		pattern = Pattern.compile(attrPattern, Pattern.CASE_INSENSITIVE
 				| Pattern.DOTALL);

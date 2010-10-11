@@ -20,6 +20,7 @@
  */
 package org.parosproxy.paros.model;
 
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -191,7 +192,9 @@ public class SiteMap extends DefaultTreeModel {
 			if (path == null) {
 				path = "";
 			}
-
+			
+			//FIXME: here we have to detect when a closing html tag is used inside the path
+			//We need to implement a tokenizer that is able to handle closing html tags
 			tokenizer = new StringTokenizer(path, "/");
 			while (tokenizer.hasMoreTokens()) {
 
@@ -201,7 +204,13 @@ public class SiteMap extends DefaultTreeModel {
 						// leaf - path name
 						findAndAddLeaf(parent, folder, ref, msg);
 					} else {
-						parent = findAndAddChild(parent, folder, ref, msg);
+						try {
+							parent = findAndAddChild(parent, folder, ref, msg);
+						} catch ( URIException e ) {
+							// Andiparos: Do not add path's that break the sitemap
+							// FIXME: we have to detect html inside of url's
+				            log.warn("unable to create URI with relative value: " + folder);
+				        }
 					}
 
 				}
@@ -209,7 +218,7 @@ public class SiteMap extends DefaultTreeModel {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		} 
 
 	}
 	

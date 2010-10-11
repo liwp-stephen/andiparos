@@ -177,8 +177,7 @@ public class HostProcess implements Runnable {
 			test = (Plugin) plugin.getClass().newInstance();
 			test.setConfig(plugin.getConfig());
 			test.init(msg, this);
-			notifyHostProgress(plugin.getName() + ": "
-					+ msg.getRequestHeader().getURI().toString());
+			notifyHostProgress(plugin.getName() + ": " + msg.getRequestHeader().getURI().toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -67,7 +67,11 @@ public class PopupCopyUrlToClipboardMenu extends ExtensionPopupMenu {
 					SiteMap map = (SiteMap) tree.getModel();
 					for (int i = 0; i < paths.length; i++) {
 						SiteNode node = (SiteNode) paths[i].getLastPathComponent();
-						copyToClipboard(node);
+						
+						// Andiparos: Root should not be copied to Clipboard
+						if (!node.isRoot()) {
+							copyToClipboard(node);
+						}
 					}
 				}
 
