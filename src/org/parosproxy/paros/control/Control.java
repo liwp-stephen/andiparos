@@ -27,6 +27,7 @@ import org.parosproxy.paros.extension.beanshell.ExtensionBeanShell;
 import org.parosproxy.paros.extension.edit.ExtensionEdit;
 import org.parosproxy.paros.extension.filter.ExtensionFilter;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.extension.keystoremanager.ExtensionKeystoreManager;
 import org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor;
 import org.parosproxy.paros.extension.option.ExtensionOption;
 import org.parosproxy.paros.extension.report.ExtensionReport;
@@ -91,6 +92,7 @@ public class Control extends AbstractControl {
 
 		// should be the first ext to load
 		getExtensionLoader().addExtension(new ExtensionOption());
+		getExtensionLoader().addExtension(new ExtensionKeystoreManager());
 		getExtensionLoader().addExtension(new ExtensionEdit());
 
 		getExtensionLoader().addExtension(new ExtensionFilter());

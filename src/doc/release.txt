@@ -1,3 +1,13 @@
+1.0.6	Fixed Windows Version
+--
+1.0.5	Testing release
+		Included several enhancements of Zaproxy
+		Improved exception handling
+		Introduced support for different languages (not finished so far)
+		Implemented support for choosing font types and sizes
+--
+1.0.4	Fixed some minor bugs
+--
 1.0.3	Added BeanShell support (Code contribution of Stephen de Vries)
 		Added new Custom User-Agent filter
 		Added working update check

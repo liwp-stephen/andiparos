@@ -47,8 +47,8 @@ public final class Constant {
 	// as the version_tag otherwise the config.xml will be overwritten
 	// everytime.
 	// ************************************************************
-	public static final String PROGRAM_VERSION = "1.0.5";
-	public static final long VERSION_TAG = 1000005;
+	public static final String PROGRAM_VERSION = "1.0.6";
+	public static final long VERSION_TAG = 1000006;
 	// ************************************************************
 	// note the above
 	// ************************************************************
@@ -258,7 +258,6 @@ public final class Constant {
 
 	public static boolean isWindows() {
 		String os_name = System.getProperty("os.name");
-
 		Matcher matcher = patternWindows.matcher(os_name);
 		return matcher.find();
 	}

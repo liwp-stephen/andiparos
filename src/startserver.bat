@@ -1,1 +1,1 @@
-javaw -jar andiparos.jar 
+javaw -cp lib/commons-httpclient-3.0.jar:lib/commons-codec-1.3.jar:lib/jdom.jar:lib/log4j-1.2.15.jar:lib/hsqldb-1.8.1.1.jar:lib/commons-collections-3.2.1.jar:lib/commons-configuration-1.5.jar:lib/commons-lang-2.4.jar:lib/commons-logging-1.1.1.jar:lib/commons-logging-api-1.1.1.jar:lib/bsh-2.0b4.jar -jar andiparos.jar 
