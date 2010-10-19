@@ -16,77 +16,75 @@ UninstallDisplayName=Andiparos 1.0.6
 UninstallDisplayIcon={app}\andiparos-multi.ico
 ;AlwaysCreateUninstallIcon=yes
 LicenseFile=F:\Andiparos\license\gpl-2.0.txt
-; uncomment the following line if you want your installation to run on NT 3.51 too.
-; MinVersion=4,3.51
 
 [Tasks]
-Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; MinVersion: 1,1
-Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; MinVersion: 1,1; Flags: unchecked
+Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:";
+Name: "desktopicon\common"; Description: "For all users"; GroupDescription: "Additional icons:"; Flags: exclusive
+Name: "desktopicon\user"; Description: "For the current user only"; GroupDescription: "Additional icons:"; Flags: exclusive unchecked
+Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
 
 [Files]
-Source: "F:\Andiparos\release.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\startserver.bat"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\andiparos.jar"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\Messages.properties"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\andiparos-multi.ico"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "F:\Andiparos\release.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\Andiparos\Andiparos.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\Andiparos\andiparos.jar"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\Andiparos\Messages.properties"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\Andiparos\andiparos-multi.ico"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "F:\Andiparos\db\andiparosdb.data"; DestDir: "{app}\db"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\db\andiparosdb.properties"; DestDir: "{app}\db"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\db\andiparosdb.script"; DestDir: "{app}\db"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\db\andiparosdb.backup"; DestDir: "{app}\db"; CopyMode: alwaysoverwrite
+Source: "F:\Andiparos\db\andiparosdb.data"; DestDir: "{app}\db"; Flags: ignoreversion
+Source: "F:\Andiparos\db\andiparosdb.properties"; DestDir: "{app}\db"; Flags: ignoreversion
+Source: "F:\Andiparos\db\andiparosdb.script"; DestDir: "{app}\db"; Flags: ignoreversion
+Source: "F:\Andiparos\db\andiparosdb.backup"; DestDir: "{app}\db"; Flags: ignoreversion
 
-Source: "F:\Andiparos\filter\dummy.txt"; DestDir: "{app}\filter"; CopyMode: alwaysoverwrite
+Source: "F:\Andiparos\filter\dummy.txt"; DestDir: "{app}\filter"; Flags: ignoreversion
 
+Source: "F:\Andiparos\lib\bsh-2.0b4.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\commons-codec-1.3.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\commons-collections-3.2.1.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\commons-configuration-1.5.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\commons-httpclient-3.0.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\commons-lang-2.4.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\commons-logging-1.1.1.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\commons-logging-api-1.1.1.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\hsqldb-1.8.1.1.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\jdom.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\Andiparos\lib\log4j-1.2.15.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
 
-Source: "F:\Andiparos\lib\bcprov-jdk16-145.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\bsh-2.0b4.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\commons-codec-1.3.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\commons-collections-3.2.1.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\commons-configuration-1.5.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\commons-httpclient-3.0.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\commons-lang-2.4.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\commons-logging-1.1.1.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\commons-logging-api-1.1.1.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\hsqldb-1.8.1.1.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\jdom.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\lib\log4j-1.2.15.jar"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite
+Source: "F:\Andiparos\license\ApacheLicense-2.0.txt"; DestDir: "{app}\license"; Flags: ignoreversion
+Source: "F:\Andiparos\license\famfam-icons.txt"; DestDir: "{app}\license"; Flags: ignoreversion
+Source: "F:\Andiparos\license\gpl-2.0.txt"; DestDir: "{app}\license"; Flags: ignoreversion
+Source: "F:\Andiparos\license\hsqldb_lic.txt"; DestDir: "{app}\license"; Flags: ignoreversion
+Source: "F:\Andiparos\license\hypersonic_lic.txt"; DestDir: "{app}\license"; Flags: ignoreversion
+Source: "F:\Andiparos\license\lgpl-3.0.txt"; DestDir: "{app}\license"; Flags: ignoreversion
+Source: "F:\Andiparos\license\TheClarifiedArtisticLicense.htm"; DestDir: "{app}\license"; Flags: ignoreversion
+Source: "F:\Andiparos\license\TheClarifiedArtisticLicense.rtf"; DestDir: "{app}\license"; Flags: ignoreversion
 
-Source: "F:\Andiparos\license\ApacheLicense-2.0.txt"; DestDir: "{app}\license"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\license\famfam-icons.txt"; DestDir: "{app}\license"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\license\gpl-2.0.txt"; DestDir: "{app}\license"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\license\hsqldb_lic.txt"; DestDir: "{app}\license"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\license\hypersonic_lic.txt"; DestDir: "{app}\license"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\license\lgpl-3.0.txt"; DestDir: "{app}\license"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\license\TheClarifiedArtisticLicense.htm"; DestDir: "{app}\license"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\license\TheClarifiedArtisticLicense.rtf"; DestDir: "{app}\license"; CopyMode: alwaysoverwrite
+Source: "F:\Andiparos\log\dummy.txt"; DestDir: "{app}\log"; Flags: ignoreversion
 
-Source: "F:\Andiparos\log\dummy.txt"; DestDir: "{app}\log"; CopyMode: alwaysoverwrite
+Source: "F:\Andiparos\plugin\dummy.txt"; DestDir: "{app}\plugin"; Flags: ignoreversion
 
-Source: "F:\Andiparos\plugin\dummy.txt"; DestDir: "{app}\plugin"; CopyMode: alwaysoverwrite
+Source: "F:\Andiparos\session\dummy.txt"; DestDir: "{app}\session"; Flags: ignoreversion
 
-Source: "F:\Andiparos\session\dummy.txt"; DestDir: "{app}\session"; CopyMode: alwaysoverwrite
-
-Source: "F:\Andiparos\xml\alert.xml"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\alertDef.xml"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\config.xml"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\drivers.xml"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\session.xml"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\scanPolicy.xml"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\reportCompare.xsl"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\reportLatestScan.xsl"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\untitledsession.xml"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\vulnerabilities.xml"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\test.xml"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
-Source: "F:\Andiparos\xml\log4j.properties"; DestDir: "{app}\xml"; CopyMode: alwaysoverwrite
+Source: "F:\Andiparos\xml\alert.xml"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\alertDef.xml"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\config.xml"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\drivers.xml"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\session.xml"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\scanPolicy.xml"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\reportCompare.xsl"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\reportLatestScan.xsl"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\untitledsession.xml"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\vulnerabilities.xml"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\test.xml"; DestDir: "{app}\xml"; Flags: ignoreversion
+Source: "F:\Andiparos\xml\log4j.properties"; DestDir: "{app}\xml"; Flags: ignoreversion
 
 
 [INI]
 Filename: "{app}\andiparos.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://code.google.com/p/andiparos"
 
 [Icons]
-Name: "{group}\Andiparos 1.0.6"; Filename: "javaw.exe" ; Parameters: "-cp lib/commons-httpclient-3.0.jar:lib/commons-codec-1.3.jar:lib/jdom.jar:lib/log4j-1.2.15.jar:lib/hsqldb-1.8.1.1.jar:lib/commons-collections-3.2.1.jar:lib/commons-configuration-1.5.jar:lib/commons-lang-2.4.jar:lib/commons-logging-1.1.1.jar:lib/commons-logging-api-1.1.1.jar:lib/bsh-2.0b4.jar -jar andiparos.jar"; WorkingDir: "{app}"; IconFilename: "{app}\andiparos-multi.ico"
+Name: "{group}\Andiparos 1.0.6"; Filename: "{app}\Andiparos.exe"; WorkingDir: "{app}"; IconFilename: "{app}\andiparos-multi.ico"
 Name: "{group}\Andiparos on the Web"; Filename: "{app}\andiparos.url"
-Name: "{userdesktop}\Andiparos 1.0.6"; Filename: "javaw.exe" ; Parameters: "-cp lib/commons-httpclient-3.0.jar:lib/commons-codec-1.3.jar:lib/jdom.jar:lib/log4j-1.2.15.jar:lib/hsqldb-1.8.1.1.jar:lib/commons-collections-3.2.1.jar:lib/commons-configuration-1.5.jar:lib/commons-lang-2.4.jar:lib/commons-logging-1.1.1.jar:lib/commons-logging-api-1.1.1.jar:lib/bsh-2.0b4.jar -jar andiparos.jar";WorkingDir: "{app}"; IconFilename: "{app}\andiparos-multi.ico"; IconIndex: 0; MinVersion: 4,4; Tasks: desktopicon
+Name: "{commondesktop}\Andiparos 1.0.6"; Filename: "{app}\Andiparos.exe"; WorkingDir: "{app}"; IconFilename: "{app}\andiparos-multi.ico"; IconIndex: 0; MinVersion: 4,4; Tasks: desktopicon
 
 
 [UninstallDelete]
